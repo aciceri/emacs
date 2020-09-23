@@ -1,0 +1,506 @@
+#+PROPERTY: header-args:emacs-lisp :tangle yes
+
+* My Emacs' configuration
+
+This is my Emacs configuration, it's written as [[https://www.wikiwand.com/en/Literate_programming][literate programming]]
+using [[https://orgmode.org/][org-mode]]'s Babel.
+All the settings are enclosed inside this single file named
+[[README.org]], the reason of this choice is that many services (like
+GitHub) automatically looks for these names.
+The configuration of different Emacs' aspects are kept divided in
+different paragraphs. 
+
+This file must be considered part of the Git repository to which it
+belongs and it may not work properly without the other files.
+Despite I mainly use [[https://nixos.org][NixOS]] I chose to keep my Emacs configuration
+detached from my Nix files, this way I should be able get my Emacs'
+settings in a non-Nix environment.
+
+However the installing process of the required packages is not managed
+by this configuration; for example on my NixOS system I use the
+[[https://github.com/nix-community/emacs-overlay][emacs-overlay]] which automatically parses this file looking for the
+~(use-package <package>)~ declarations and then downloads and builds
+the latest versions from MELPA.
+I preferred to maintain this agnostic approach in order to don't make
+this already dense file even more complex.
+Indeed, as it's configured, ~use-package~ should ensure that the
+packages are installed, and if this is not the case it should install
+them.
+
+I use [[https://github.com/ch11ng/exwm][EXWM]] (i.e. Emacs X Window Manager) but since I wanted to keep
+the possibility to use this configuration also on different systems
+(maybe without X.org) I tried to isolate its settings.
+So, even if I never tried, it should be easy to disable it without
+consequences.
+
+** General tweaking
+  
+This should increase the space thresold before the garbage collector
+starts doing its work.
+Some users on the internet said that this snippet speeded up the boot. 
+
+#+begin_src emacs-lisp 
+  (let* ((normal-gc-cons-threshold (* 20 1024 1024))
+	 (init-gc-cons-threshold (* 128 1024 1024)))
+    (setq gc-cons-threshold init-gc-cons-threshold)
+    (add-hook 'emacs-startup-hook
+	      (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
+#+end_src 
+
+** use-package
+
+This is the only package that has to be manually installed
+(automatically installed if using the NixOS' emacs-overlay)
+
+#+begin_src emacs-lisp 
+(require 'use-package)
+(setq use-package-alwaysensure t) ;automatically downloads packages if not installed
+#+end_src 
+
+** General settings
+This snippet contatins different things that I wasn't able to gather
+better.
+Hopefully, in a future, this section won't exist anymore.
+
+#+begin_src emacs-lisp 
+
+(setq backup-directory-alist `(("." . "~/.emacs-saves")))
+(setq backup-by-copying t)
+(setq delete-old-versions t
+  kept-new-versions 6
+  kept-old-versions 2
+  version-control t)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+(setq use-dialog-box nil)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(fringe-mode 1)
+(setq display-time-format "%H:%M")
+(display-time-mode 1)
+(setq mouse-autoselect-window 't)
+
+(setq inhibit-startup-screen t)
+
+(setq async-shell-command-buffer 'new-buffer)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'hl-line-mode)
+(add-hook 'org-mode-hook 'auto-fill-mode)
+(set-fill-column 80)
+
+(add-to-list 'default-frame-alist '(font . "Fira Code-12"))
+(set-face-attribute 'default t :font "Fira Code-12")
+
+(setq show-paren-delay 0)
+(set-face-background 'show-paren-match "#111")
+(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+(show-paren-mode 1)
+
+(use-package quelpa-use-package)
+
+(package-initialize)
+
+(server-start)
+#+end_src
+
+** Org configuration
+
+#+begin_src emacs-lisp 
+(require 'org-protocol)
+(setq org-default-notes-file (concat org-directory "~/notes.org"))
+(setq org-capture-templates `(
+	("p" "Protocol" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
+        "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+	("L" "Protocol Link" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
+        "* %? [[%:link][%:description]] \nCaptured On: %U")
+))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)))
+#+end_src
+
+** Theming
+I'm using the ~doom-one~ theme from the ~doom-themes~ package.
+In addition it's loaded the ~all-the-icons~ fonts and a special
+modeline from ~doom-modeline~.
+
+#+begin_src emacs-lisp 
+(use-package doom-themes
+  :after treemacs
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-one t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  
+  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  (doom-themes-treemacs-config)
+  
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config)
+  )
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1))
+
+(use-package fira-code-mode
+  :hook prog-mode
+  :config (setq fira-code-mode-disabled-ligatures '("x")))
+#+end_src
+
+** EXWM
+The following configuration must be commented out one doesn't want to
+use Emacs as windows manager.
+
+#+begin_src emacs-lisp 
+(use-package exwm
+  :if window-system
+  :config
+  (progn
+    (require 'seq)
+    
+  (setq exwm-input-global-keys
+	`(
+	  ([?\s-c] . exwm-reset) ; works?
+
+	  ([?\s-w] . exwm-workspace-switch)
+	  ,@(mapcar (lambda (i)
+		      `(,(kbd (format "s-%d" i)) .
+			(lambda ()
+			  (interactive)
+			  (exwm-workspace-switch-create ,i))))
+		    (number-sequence 0 9))
+
+	  ([?\s-f] . exwm-layout-toggle-fullscreen)
+	  ([?\s-g] . exwm-floating-toggle-floating)
+
+	  ([?\s-t] . helm-exwm)
+
+	  ([?\s-q] . kill-current-buffer)
+
+	  ([?\s-m] . (lambda () (interactive)
+		       (async-shell-command "spotify")
+		       (async-shell-command "spotify-adkiller")))
+
+	  ([?\s-b] . (lambda () (interactive)
+		       (start-process "" nil "firefox")))
+
+	  ([?\s-p] . (lambda () (interactive)
+		       (start-process "" nil "screenshot")))
+	  
+	  ([?\s-d] . helm-run-external-command)))
+
+ 
+  (defun exwm-rename-buffer-to-title ()
+    (exwm-workspace-rename-buffer exwm-title))
+  (add-hook 'exwm-update-title-hook 'exwm-rename-buffer-to-title)
+
+  (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
+  (add-hook 'exwm-floating-exit-hook 'exwm-layout-show-mode-line)
+
+  (setq exwm-workspace-show-all-buffers t)
+  
+  (setq window-divider-default-bottom-width 2
+	window-divider-default-right-width 2)
+  (window-divider-mode)
+
+  (exwm-input-set-key (kbd "s-h") #'windmove-left)
+  (exwm-input-set-key (kbd "s-j") #'windmove-down)
+  (exwm-input-set-key (kbd "s-k") #'windmove-up)
+  (exwm-input-set-key (kbd "s-l") #'windmove-right)
+  
+  (exwm-enable)))
+
+(use-package windsize
+  :after exwm
+  :config (progn
+	    (windsize-default-keybindings)
+	    (exwm-input-set-key (kbd "s-H") #'windsize-left)
+	    (exwm-input-set-key (kbd "s-J") #'windsize-down)
+	    (exwm-input-set-key (kbd "s-K") #'windsize-up)
+	    (exwm-input-set-key (kbd "s-L") #'windsize-right)
+	    ))
+
+(use-package helm-exwm
+  :after (exwm helm)
+  :config (setq helm-exwm-buffer-max-length nil)
+)
+#+end_src
+
+** Evil 
+In a future I think I'll try the Emacs keybindings, but for now I
+prefer the Vim keybindings, at least for the text editing.
+Since I use small keyboards I think it's better to use a modal editor,
+however for everything that is not text editing I use the normal Emacs
+keybindings.
+#+begin_src emacs-lisp
+
+(use-package evil
+  :init
+  (setq evil-want-keybinding nil)
+  :config
+  (progn
+    (evil-mode 1) ; globally enable evil-mode except for the following modes
+    (mapcar (lambda (mode) (evil-set-initial-state mode 'emacs))
+	   '(vterm-mode
+	     eshell-mode
+	     dired-mode
+	     ))))
+
+(use-package evil-collection
+  :after (evil company-mode vterm)
+  :config
+    (evil-collection-init))
+
+(use-package org-evil)
+#+end_src
+
+** Vterm
+This is a really good terminal emulator.
+I tend to use Emacs for everything but sometimes I need to use
+external tools, and in this case I tend to use ~eshell~ which is
+better ingrated with Emacs, but sometimes this is not sufficient
+(e.g. the application uses nCurses, or I'm simply sshing in a remote
+shell and I don't want to use TRAMP) and then I use Vterm.
+#+begin_src emacs-lisp
+
+(use-package vterm)
+#+end_src
+
+** Helm
+Unfortunately this is currently unmantained (there was only a
+mantainer, who devoted himself to it for years) but I hope that
+someone in the near future will pick up the project.
+However this is really stable and I never had problems.
+
+#+begin_src emacs-lisp
+(use-package helm
+  
+  :init
+  (progn
+    (require 'helm-config)
+    (setq helm-autoresize-max-height 0)
+    (setq helm-autoresize-min-height 20)
+    (global-set-key (kbd "C-c h") 'helm-command-prefix)
+    (global-unset-key (kbd "C-x c"))
+
+    (when (executable-find "ack")
+      (setq helm-grep-default-command "ack -Hn --no-group --no-color %e %p %f"
+	    helm-grep-default-recurse-command "ack -H --no-group --no-color %e %p %f"))
+
+    (setq helm-semantic-fuzzy-match t
+	  helm-imenu-fuzzy-match t
+	  helm-M-x-fuzzy-match t ;; optional fuzzy matching for helm-M-x
+	  helm-buffers-fuzzy-matching t
+	  helm-recentf-fuzzy-match t
+	  helm-split-window-in-side-p t
+	  helm-buffer-max-length nil)
+
+    (helm-mode 1)
+    (helm-autoresize-mode 1))
+
+  :bind
+  (("C-c h" . helm-command-prefix)
+   :map helm-command-map
+   ("b" . helm-buffers-list)
+   ("f" . helm-find-files)
+   ("m" . helm-mini)
+   ("o" . helm-imenu))
+  :bind
+  (("M-x" . helm-M-x)
+   ("M-y" . helm-show-kill-ring)
+   ("C-x b" . helm-mini)
+   ("C-x C-f" . helm-find-files))
+  )
+#+end_src
+
+** Projectile
+#+begin_src emacs-lisp
+
+(use-package projectile
+  :config
+  (progn
+    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (projectile-mode +1)))
+
+(use-package helm-projectile
+  :after projectile
+  :config
+  (progn
+    (helm-projectile-on)))
+#+end_src
+
+** Treemacs
+#+begin_src emacs-lisp
+
+(use-package treemacs)
+
+(use-package treemacs-evil
+  :after treemacs)
+#+end_src
+
+** Company
+#+begin_src emacs-lisp
+(use-package company
+  :config (global-company-mode))
+#+end_src
+
+** Nix(Os) integration
+This section contains everything related to Nix(Os). 
+#+begin_src emacs-lisp
+(use-package nix-mode
+  :mode "\\.nix\\'")
+
+(use-package company-nixos-options
+  :after company
+  :config
+  (progn
+    (add-to-list 'company-backends 'company-nixos-options)))
+
+(use-package helm-nixos-options)
+#+end_src
+
+** Paredit
+This package is fundamental when writing Lisp/Scheme.
+#+begin_src emacs-lisp
+
+(use-package paredit
+  :hook ((lisp-mode
+	  emacs-lisp-mode
+	  ielm-mode
+	  lisp-interaction-mode
+	  scheme-mode
+	  eval-expression-minibuffer-setup) .
+	  paredit-mode)
+  :config (eldoc-add-command 'paredit-backward-delete 'paredit-close-round))
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+** Pass  
+I use the `pass` password manager, to use these packages I manually
+configure it in the shell before.
+#+begin_src emacs-lisp
+(use-package pass)
+(use-package helm-pass)
+#+end_src
+
+** Emms
+I don't use it anymore because I didn't like the way it managed MPD,
+however I'll leave here my configuration.
+Now I use `mpdel`, see the next paragraph. 
+#+begin_src emacs-lisp
+;; (use-package emms
+;;   :config
+;;   (progn
+;;     (require 'emms-setup)
+;;     (require 'emms-player-mpd)
+;;     (require 'emms-volume)
+;;     (setq emms-player-mpd-server-name "localhost")
+;;     (setq emms-player-mpd-server-port "6600")
+;;     (setq emms-volume-change-function 'emms-volume-mpd-change)
+;;     (add-to-list 'emms-info-functions 'emms-info-mpd)
+;;     (add-to-list 'emms-player-list 'emms-player-mpd)
+;;     (emms-all)
+;;     (defun my-emms-browser-covers (dir dim)
+;;       (emms-browser-cache-thumbnail-async (concat "/home/andrea/nas/musica/" dir) dim))
+;;     (setq emms-browser-covers 'my-emms-browser-covers)
+;;     (emms-cache-set-from-mpd-all)))
+#+end_src
+
+** MPDel
+This package permit to control the MPD deamon, obviously it has to be
+installed and started before.
+#+begin_src emacs-lisp
+(use-package mpdel
+  :config
+  (progn
+    (setq libmpdel-hostname "localhost")
+    (setq libmpdel-port "6600")))
+#+end_src
+
+** Elfeed
+To manage my RSS feeds.
+#+begin_src emacs-lisp
+(use-package elfeed-org
+  :config (progn
+	    (elfeed-org)
+	    (setq rmh-elfeed-org-files (list "~/.emacs.d/feeds/feeds.org"))
+
+	    (defun elfeed-v-mpv (url)
+  "Watch a video from URL in MPV"
+  (async-shell-command (format "mpv %s" url)))
+
+(defun elfeed-view-mpv (&optional use-generic-p)
+  "Youtube-feed link"
+  (interactive "P")
+  (let ((entries (elfeed-search-selected)))
+    (cl-loop for entry in entries
+	     do (elfeed-untag entry 'unread)
+	     when (elfeed-entry-link entry)
+	     do (elfeed-v-mpv it))
+    (mapc #'elfeed-search-update-entry entries)
+    (unless (use-region-p) (forward-line))))
+
+(define-key elfeed-search-mode-map (kbd "v") 'elfeed-view-mpv)))
+#+end_src
+
+** Edit-server
+This package allows to edit a textbox in a browser (with the related
+extension installed) using an Emacs buffer.
+#+begin_src emacs-lisp
+(use-package edit-server
+  :ensure t
+  :commands edit-server-start
+  :init (if after-init-time
+              (edit-server-start)
+            (add-hook 'after-init-hook
+                      #'(lambda() (edit-server-start))))
+  :config (setq edit-server-new-frame-alist
+                '((name . "Edit with Emacs FRAME")
+                  (top . 200)
+                  (left . 200)
+                  (width . 80)
+                  (height . 25)
+                  (minibuffer . t)
+                  (menu-bar-lines . t)
+                  (window-system . x))))
+#+end_src
+
+** Magit
+One of the most famous Emacs package, I never needed to edit the
+defaults.
+#+begin_src emacs-lisp
+(use-package magit)
+#+end_src
+
+** Zoom
+At the moment I'm not using it should automatically resize Emacs
+windows in order to mantain specifit ratios, e.g. the golden ratio.
+#+begin_src emacs-lisp
+(use-package zoom)
+#+end_src
+
+** Dired+
+#+begin_src emacs-lisp
+Installed directly from a script fetched on emacswiki, it adds new
+features to Dired.
+(use-package dired+
+  :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
+  :defer 1
+  :init
+  (setq diredp-hide-details-initially-flag nil)
+  (setq diredp-hide-details-propagate-flag nil)
+
+  :config
+  (diredp-toggle-find-file-reuse-dir 1))
+#+end_src
