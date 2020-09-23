@@ -1,0 +1,3 @@
+[submodule "feeds"]
+	path = feeds
+	url = git@github.com:aciceri/feeds.git
