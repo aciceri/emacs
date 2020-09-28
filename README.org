@@ -572,5 +572,7 @@ automatically committed and pushed on a remote repository.
 	    (setq org-journal-prefix-key "C-x j"))
     :config
     (setq org-journal-dir "~/journal/"
+	  org-journal-file-format "%Y%m%d.org"
+	  org-journal-file-type 'daily
 	  org-journal-date-format "%A, %d %B %Y"))
 #+end_src
