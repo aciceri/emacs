@@ -40,11 +40,11 @@ starts doing its work.
 Some users on the internet said that this snippet speeded up the boot. 
 
 #+begin_src emacs-lisp 
-  (let* ((normal-gc-cons-threshold (* 20 1024 1024))
-	 (init-gc-cons-threshold (* 128 1024 1024)))
-    (setq gc-cons-threshold init-gc-cons-threshold)
-    (add-hook 'emacs-startup-hook
-	      (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
+  ;; (let* ((normal-gc-cons-threshold (* 20 1024 1024))
+  ;;        (init-gc-cons-threshold (* 128 1024 1024)))
+  ;;   (setq gc-cons-threshold init-gc-cons-threshold)
+  ;;   (add-hook 'emacs-startup-hook
+  ;; 	    (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
 #+end_src 
 
 ** use-package
@@ -63,8 +63,9 @@ better.
 Hopefully, in a future, this section won't exist anymore.
 
 #+begin_src emacs-lisp 
-
-(setq backup-directory-alist `(("." . "~/.emacs-saves")))
+(setq create-lockfiles nil)
+(setq backup-directory-alist '((".*" . "~/.emacs-saves/")))
+(setq auto-save-file-name-transforms '((".*" "~/.emacs-saves/" t)))
 (setq backup-by-copying t)
 (setq delete-old-versions t
   kept-new-versions 6
@@ -107,18 +108,27 @@ Hopefully, in a future, this section won't exist anymore.
 ** Org configuration
 
 #+begin_src emacs-lisp 
-(require 'org-protocol)
-(setq org-default-notes-file (concat org-directory "~/notes.org"))
-(setq org-capture-templates `(
-	("p" "Protocol" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
-        "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-	("L" "Protocol Link" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
-        "* %? [[%:link][%:description]] \nCaptured On: %U")
-))
+  (require 'org-protocol)
+  (setq org-default-notes-file (concat org-directory "~/notes.org"))
+  (setq org-capture-templates `(
+	  ("p" "Protocol" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
+	  "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+	  ("L" "Protocol Link" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
+	  "* %? [[%:link][%:description]] \nCaptured On: %U")
+  ))
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+
+  (setq safe-local-variable-values '((eval add-hook 'after-save-hook 'org-icalendar-export-to-ics nil t)))
+
+  (setq org-agenda-files '("~/nas/syncthing/orgzly/Agenda.org" "~/nas/syncthing/orgzly/Lavoro.org"))
+
+  ;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.6))
+  ;; (use-package org-fragtog
+  ;;   :hook (org-mode org-fragtog)
+  ;; )
 #+end_src
 
 ** Theming
@@ -459,7 +469,6 @@ This package allows to edit a textbox in a browser (with the related
 extension installed) using an Emacs buffer.
 #+begin_src emacs-lisp
 (use-package edit-server
-  :ensure t
   :commands edit-server-start
   :init (if after-init-time
               (edit-server-start)
@@ -491,16 +500,74 @@ windows in order to mantain specifit ratios, e.g. the golden ratio.
 #+end_src
 
 ** Dired+
-#+begin_src emacs-lisp
+
 Installed directly from a script fetched on emacswiki, it adds new
 features to Dired.
-(use-package dired+
-  :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
-  :defer 1
-  :init
-  (setq diredp-hide-details-initially-flag nil)
-  (setq diredp-hide-details-propagate-flag nil)
+#+begin_src emacs-lisp
+  ;; (use-package dired+
+  ;;   :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
+  ;;   :defer 1
+  ;;   :init
+  ;;   (setq diredp-hide-details-initially-flag nil)
+  ;;   (setq diredp-hide-details-propagate-flag nil)
 
-  :config
-  (diredp-toggle-find-file-reuse-dir 1))
+  ;;   :config
+  ;;   (diredp-toggle-find-file-reuse-dir 1))
+#+end_src
+** Working with React
+#+begin_src emacs-lisp
+  (use-package typescript-mode)
+
+  (use-package rjsx-mode)
+
+  (use-package tide
+    :ensure t
+    :after (typescript-mode company flycheck)
+    :hook ((typescript-mode . tide-setup)
+	   (typescript-mode . tide-hl-identifier-mode)
+	      (before-save . tide-format-before-save))
+      :config (progn
+      (defun setup-tide-mode ()
+      (interactive)
+      (tide-setup)
+      (flycheck-mode +1)
+      (setq flycheck-check-syntax-automatically '(save mode-enabled))
+      (eldoc-mode +1)
+      (tide-hl-identifier-mode +1)
+      ;; company is an optional dependency. You have to
+      ;; install it separately via package-install
+      ;; `M-x package-install [ret] company`
+      (company-mode +1))
+
+      ;; aligns annotation to the right hand side
+      (setq company-tooltip-align-annotations t)
+
+      ;; formats the buffer before saving
+      (add-hook 'before-save-hook 'tide-format-before-save)
+      (add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+      ;; to manage tsx files
+      (require 'web-mode)
+      (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+      (add-hook 'web-mode-hook
+	      (lambda ()
+		  (when (string-equal "tsx" (file-name-extension buffer-file-name))
+		  (setup-tide-mode))))
+      ;; enable typescript-tslint checker
+      (flycheck-add-mode 'typescript-tslint 'web-mode)))
+
+#+end_src
+** Journal
+I keep a journal with my notes, when I save an entry it's
+automatically committed and pushed on a remote repository.
+
+#+begin_src emacs-lisp
+  (use-package org-journal
+    :init (progn
+	    (add-hook 'after-save-hook (lambda () (async-shell-command "git add * && git commit -m 'Automatic' && git push origin master")))
+	    ;; Change default prefix key; needs to be set before loading org-journal
+	    (setq org-journal-prefix-key "C-x j"))
+    :config
+    (setq org-journal-dir "~/journal/"
+	  org-journal-date-format "%A, %d %B %Y"))
 #+end_src
