@@ -566,7 +566,7 @@ automatically committed and pushed on a remote repository.
     :init (progn
 	    (add-hook 'after-save-hook
 		      (lambda ()
-			(async-shell-command "git add * && git commit -m 'Automatic' && git push origin master"))
+			(async-shell-command "git add * && git commit -m 'Automatic' && git push origin master")
 		      nil 'make-it-local))
 	    ;; Change default prefix key; needs to be set before loading org-journal
 	    (setq org-journal-prefix-key "C-x j"))
