@@ -485,7 +485,7 @@ extension installed) using an Emacs buffer.
 		    (window-system . x))))
 
   (use-package atomic-chrome
-    :init (atomir-chrome-start-server))
+    :init (atomic-chrome-start-server))
 #+end_src
 
 ** Magit
