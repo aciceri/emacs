@@ -33,102 +33,49 @@ the possibility to use this configuration also on different systems
 So, even if I never tried, it should be easy to disable it without
 consequences.
 
-** General tweaking
-  
-This should increase the space thresold before the garbage collector
-starts doing its work.
-Some users on the internet said that this snippet speeded up the boot. 
-
-#+begin_src emacs-lisp 
-  ;; (let* ((normal-gc-cons-threshold (* 20 1024 1024))
-  ;;        (init-gc-cons-threshold (* 128 1024 1024)))
-  ;;   (setq gc-cons-threshold init-gc-cons-threshold)
-  ;;   (add-hook 'emacs-startup-hook
-  ;; 	    (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
-#+end_src 
-
-** use-package
-
-This is the only package that has to be manually installed
-(automatically installed if using the NixOS' emacs-overlay)
-
-#+begin_src emacs-lisp 
-(require 'use-package)
-(setq use-package-alwaysensure t) ;automatically downloads packages if not installed
-#+end_src 
-
 ** General settings
 This snippet contatins different things that I wasn't able to gather
 better.
 Hopefully, in a future, this section won't exist anymore.
 
 #+begin_src emacs-lisp 
-(setq create-lockfiles nil)
-(setq backup-directory-alist '((".*" . "~/.emacs-saves/")))
-(setq auto-save-file-name-transforms '((".*" "~/.emacs-saves/" t)))
-(setq backup-by-copying t)
-(setq delete-old-versions t
-  kept-new-versions 6
-  kept-old-versions 2
-  version-control t)
+  (setq create-lockfiles nil)
+  (setq backup-directory-alist '((".*" . "~/.emacs-saves/")))
+  (setq auto-save-file-name-transforms '((".*" "~/.emacs-saves/" t)))
+  (setq backup-by-copying t)
+  (setq delete-old-versions t
+	kept-new-versions 6
+	kept-old-versions 2
+	version-control t)
 
-(defalias 'yes-or-no-p 'y-or-n-p)
-(setq use-dialog-box nil)
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(fringe-mode 1)
-(setq display-time-format "%H:%M")
-(display-time-mode 1)
-(setq mouse-autoselect-window 't)
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (setq use-dialog-box nil)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (fringe-mode 1)
+  (setq display-time-format "%H:%M")
+  (display-time-mode 1)
+  (setq mouse-autoselect-window 't)
 
-(setq inhibit-startup-screen t)
+  (setq inhibit-startup-screen t)
 
-(setq async-shell-command-buffer 'new-buffer)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(add-hook 'prog-mode-hook 'hl-line-mode)
-(add-hook 'org-mode-hook 'auto-fill-mode)
-(set-fill-column 80)
+  (setq async-shell-command-buffer 'new-buffer)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook 'hl-line-mode)
+  (add-hook 'org-mode-hook 'auto-fill-mode)
+  (set-fill-column 80)
 
-(add-to-list 'default-frame-alist '(font . "Fira Code-12"))
-(set-face-attribute 'default t :font "Fira Code-12")
+  (add-to-list 'default-frame-alist '(font . "Fira Code-12"))
+  (set-face-attribute 'default t :font "Fira Code-12")
 
-(setq show-paren-delay 0)
-(set-face-background 'show-paren-match "#111")
-(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-(show-paren-mode 1)
+  (setq show-paren-delay 0)
+  (set-face-background 'show-paren-match "#111")
+  (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+  (show-paren-mode 1)
 
-(use-package quelpa-use-package)
-
-(package-initialize)
-
-(server-start)
-#+end_src
-
-** Org configuration
-
-#+begin_src emacs-lisp 
-  (require 'org-protocol)
-  (setq org-default-notes-file (concat org-directory "~/notes.org"))
-  (setq org-capture-templates `(
-	  ("p" "Protocol" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
-	  "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-	  ("L" "Protocol Link" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
-	  "* %? [[%:link][%:description]] \nCaptured On: %U")
-  ))
-
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)))
-
-  (setq safe-local-variable-values '((eval add-hook 'after-save-hook 'org-icalendar-export-to-ics nil t)))
-
-  (setq org-agenda-files '("~/nas/syncthing/orgzly/Agenda.org" "~/nas/syncthing/orgzly/Lavoro.org"))
-
-  ;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.6))
-  ;; (use-package org-fragtog
-  ;;   :hook (org-mode org-fragtog)
-  ;; )
+  (add-hook 'text-mode-hook
+	    (lambda () (set-input-method "italian-postfix")))
 #+end_src
 
 ** Theming
@@ -137,111 +84,34 @@ In addition it's loaded the ~all-the-icons~ fonts and a special
 modeline from ~doom-modeline~.
 
 #+begin_src emacs-lisp 
-(use-package doom-themes
-  :after treemacs
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-one t)
+  (use-package doom-themes
+    :config
+    ;; Global settings (defaults)
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	  doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    (load-theme 'doom-one t)
 
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
   
-  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-  (doom-themes-treemacs-config)
+    (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+    (doom-themes-treemacs-config)
   
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config)
-  )
+    ;; Corrects (and improves) org-mode's native fontification.
+    (doom-themes-org-config)
+    )
 
-(use-package all-the-icons)
+  (set-frame-parameter (selected-frame) 'alpha '(98 . 98))
+  (add-to-list 'default-frame-alist '(alpha . (98 . 98)))
 
-(use-package doom-modeline
-  :init (doom-modeline-mode 1))
+  (use-package all-the-icons)
 
-(use-package fira-code-mode
-  :hook prog-mode
-  :config (setq fira-code-mode-disabled-ligatures '("x")))
-#+end_src
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1))
 
-** EXWM
-The following configuration must be commented out one doesn't want to
-use Emacs as windows manager.
-
-#+begin_src emacs-lisp 
-(use-package exwm
-  :if window-system
-  :config
-  (progn
-    (require 'seq)
-    
-  (setq exwm-input-global-keys
-	`(
-	  ([?\s-c] . exwm-reset) ; works?
-
-	  ([?\s-w] . exwm-workspace-switch)
-	  ,@(mapcar (lambda (i)
-		      `(,(kbd (format "s-%d" i)) .
-			(lambda ()
-			  (interactive)
-			  (exwm-workspace-switch-create ,i))))
-		    (number-sequence 0 9))
-
-	  ([?\s-f] . exwm-layout-toggle-fullscreen)
-	  ([?\s-g] . exwm-floating-toggle-floating)
-
-	  ([?\s-t] . helm-exwm)
-
-	  ([?\s-q] . kill-current-buffer)
-
-	  ([?\s-m] . (lambda () (interactive)
-		       (async-shell-command "spotify")
-		       (async-shell-command "spotify-adkiller")))
-
-	  ([?\s-b] . (lambda () (interactive)
-		       (start-process "" nil "firefox")))
-
-	  ([?\s-p] . (lambda () (interactive)
-		       (start-process "" nil "screenshot")))
-	  
-	  ([?\s-d] . helm-run-external-command)))
-
- 
-  (defun exwm-rename-buffer-to-title ()
-    (exwm-workspace-rename-buffer exwm-title))
-  (add-hook 'exwm-update-title-hook 'exwm-rename-buffer-to-title)
-
-  (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
-  (add-hook 'exwm-floating-exit-hook 'exwm-layout-show-mode-line)
-
-  (setq exwm-workspace-show-all-buffers t)
-  
-  (setq window-divider-default-bottom-width 2
-	window-divider-default-right-width 2)
-  (window-divider-mode)
-
-  (exwm-input-set-key (kbd "s-h") #'windmove-left)
-  (exwm-input-set-key (kbd "s-j") #'windmove-down)
-  (exwm-input-set-key (kbd "s-k") #'windmove-up)
-  (exwm-input-set-key (kbd "s-l") #'windmove-right)
-  
-  (exwm-enable)))
-
-(use-package windsize
-  :after exwm
-  :config (progn
-	    (windsize-default-keybindings)
-	    (exwm-input-set-key (kbd "s-H") #'windsize-left)
-	    (exwm-input-set-key (kbd "s-J") #'windsize-down)
-	    (exwm-input-set-key (kbd "s-K") #'windsize-up)
-	    (exwm-input-set-key (kbd "s-L") #'windsize-right)
-	    ))
-
-(use-package helm-exwm
-  :after (exwm helm)
-  :config (setq helm-exwm-buffer-max-length nil)
-)
+  (use-package fira-code-mode
+    :hook prog-mode
+    :config (setq fira-code-mode-disabled-ligatures '("x")))
 #+end_src
 
 ** Evil 
@@ -251,37 +121,49 @@ Since I use small keyboards I think it's better to use a modal editor,
 however for everything that is not text editing I use the normal Emacs
 keybindings.
 #+begin_src emacs-lisp
+  (use-package evil
+    :init
+    (setq evil-want-keybinding nil)
+    :config
+    (progn
+      (evil-mode 1) ; globally enable evil-mode except for the following modes
+      (mapcar (lambda (mode) (evil-set-initial-state mode 'emacs))
+	      '(vterm-mode
+		eshell-mode
+		dired-mode
+		))))
 
-(use-package evil
-  :init
-  (setq evil-want-keybinding nil)
-  :config
-  (progn
-    (evil-mode 1) ; globally enable evil-mode except for the following modes
-    (mapcar (lambda (mode) (evil-set-initial-state mode 'emacs))
-	   '(vterm-mode
-	     eshell-mode
-	     dired-mode
-	     ))))
-
-(use-package evil-collection
-  :after (evil company-mode vterm)
-  :config
+  (use-package evil-collection
+    :after (evil company-mode vterm)
+    :config
     (evil-collection-init))
 
-(use-package org-evil)
+  (use-package org-evil)
 #+end_src
 
-** Vterm
-This is a really good terminal emulator.
-I tend to use Emacs for everything but sometimes I need to use
-external tools, and in this case I tend to use ~eshell~ which is
-better ingrated with Emacs, but sometimes this is not sufficient
-(e.g. the application uses nCurses, or I'm simply sshing in a remote
-shell and I don't want to use TRAMP) and then I use Vterm.
-#+begin_src emacs-lisp
+** Org configuration
 
-(use-package vterm)
+#+begin_src emacs-lisp 
+  (require 'org-protocol)
+  (setq org-default-notes-file (concat org-directory "~/notes.org"))
+  (setq org-capture-templates `(
+				("p" "Protocol" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
+				 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+				("L" "Protocol Link" entry (file+headline ,(concat org-directory "notes.org") "Inbox")
+				 "* %? [[%:link][%:description]] \nCaptured On: %U")
+				))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+
+  (setq safe-local-variable-values '((eval add-hook 'after-save-hook 'org-icalendar-export-to-ics nil t)))
+
+  (setq org-agenda-files '("~/nas/syncthing/orgzly/Agenda.org" "~/nas/syncthing/orgzly/Lavoro.org"))
+
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.6))
+  ;;(use-package org-fragtog
+  ;;  :hook (org-mode org-fragtog))
 #+end_src
 
 ** Helm
@@ -292,7 +174,6 @@ However this is really stable and I never had problems.
 
 #+begin_src emacs-lisp
 (use-package helm
-  
   :init
   (progn
     (require 'helm-config)
@@ -327,255 +208,74 @@ However this is really stable and I never had problems.
   (("M-x" . helm-M-x)
    ("M-y" . helm-show-kill-ring)
    ("C-x b" . helm-mini)
-   ("C-x C-f" . helm-find-files))
-  )
+   ("C-x C-f" . helm-find-files)))
 #+end_src
 
-** Projectile
+** Programming
+*** FlyCheck
+
 #+begin_src emacs-lisp
-
-(use-package projectile
-  :config
-  (progn
-    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (projectile-mode +1)))
-
-(use-package helm-projectile
-  :after projectile
-  :config
-  (progn
-    (helm-projectile-on)))
+  (use-package flycheck
+    :init (global-flycheck-mode))
+  (use-package company
+    :init (global-company-mode))
+  (use-package company-quickhelp
+    :straight t
+    :config
+    (company-quickhelp-mode))
+  (use-package company-try-hard
+    :straight t
+    :bind
+    (("C-<tab>" . company-try-hard)
+     :map company-active-map
+     ("C-<tab>" . company-try-hard)))
 #+end_src
 
-** Treemacs
+*** Solidity
+    
 #+begin_src emacs-lisp
-
-(use-package treemacs)
-
-(use-package treemacs-evil
-  :after treemacs)
+  (use-package solidity-flycheck
+    :init (setq solidity-flycheck-solc-checker-active t)) ;requires solc in PATH
 #+end_src
 
-** Company
+*** Python
 #+begin_src emacs-lisp
-(use-package company
-  :config (global-company-mode))
+  (use-package elpy
+    :init (elpy-enable)
+    :config :config
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    )
+  (use-package blacken)
+  (use-package python-flycheck
+    :init (setq elpy-modules (delq 'elpy-module-flymake elpy-modules)))
+  (use-package company-jedi)
 #+end_src
 
-** Nix(Os) integration
-This section contains everything related to Nix(Os). 
-#+begin_src emacs-lisp
+*** Haskell
+    #+begin_src emacs-lisp
+(use-package haskell-mode)
+    #+end_src
+
+*** Nix
+    #+begin_src emacs-lisp
 (use-package nix-mode
   :mode "\\.nix\\'")
 
-(use-package company-nixos-options
-  :after company
-  :config
-  (progn
-    (add-to-list 'company-backends 'company-nixos-options)))
+;;(use-package company-nixos-options
+;;  :after company
+;;  :config
+;;  (progn
+;;    (add-to-list 'company-backends 'company-nixos-options)))
 
 (use-package helm-nixos-options)
 #+end_src
 
-** Paredit
-This package is fundamental when writing Lisp/Scheme.
-#+begin_src emacs-lisp
 
-(use-package paredit
-  :hook ((lisp-mode
-	  emacs-lisp-mode
-	  ielm-mode
-	  lisp-interaction-mode
-	  scheme-mode
-	  eval-expression-minibuffer-setup) .
-	  paredit-mode)
-  :config (eldoc-add-command 'paredit-backward-delete 'paredit-close-round))
-
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
-#+end_src
-
-** Pass  
-I use the `pass` password manager, to use these packages I manually
-configure it in the shell before.
-#+begin_src emacs-lisp
-(use-package pass)
-(use-package helm-pass)
-#+end_src
-
-** Emms
-I don't use it anymore because I didn't like the way it managed MPD,
-however I'll leave here my configuration.
-Now I use `mpdel`, see the next paragraph. 
-#+begin_src emacs-lisp
-;; (use-package emms
-;;   :config
-;;   (progn
-;;     (require 'emms-setup)
-;;     (require 'emms-player-mpd)
-;;     (require 'emms-volume)
-;;     (setq emms-player-mpd-server-name "localhost")
-;;     (setq emms-player-mpd-server-port "6600")
-;;     (setq emms-volume-change-function 'emms-volume-mpd-change)
-;;     (add-to-list 'emms-info-functions 'emms-info-mpd)
-;;     (add-to-list 'emms-player-list 'emms-player-mpd)
-;;     (emms-all)
-;;     (defun my-emms-browser-covers (dir dim)
-;;       (emms-browser-cache-thumbnail-async (concat "/home/andrea/nas/musica/" dir) dim))
-;;     (setq emms-browser-covers 'my-emms-browser-covers)
-;;     (emms-cache-set-from-mpd-all)))
-#+end_src
-
-** MPDel
-This package permit to control the MPD deamon, obviously it has to be
-installed and started before.
-#+begin_src emacs-lisp
-(use-package mpdel
-  :config
-  (progn
-    (setq libmpdel-hostname "localhost")
-    (setq libmpdel-port "6600")))
-#+end_src
-
-** Elfeed
-To manage my RSS feeds.
-#+begin_src emacs-lisp
-(use-package elfeed-org
-  :config (progn
-	    (elfeed-org)
-	    (setq rmh-elfeed-org-files (list "~/.emacs.d/feeds/feeds.org"))
-
-	    (defun elfeed-v-mpv (url)
-  "Watch a video from URL in MPV"
-  (async-shell-command (format "mpv %s" url)))
-
-(defun elfeed-view-mpv (&optional use-generic-p)
-  "Youtube-feed link"
-  (interactive "P")
-  (let ((entries (elfeed-search-selected)))
-    (cl-loop for entry in entries
-	     do (elfeed-untag entry 'unread)
-	     when (elfeed-entry-link entry)
-	     do (elfeed-v-mpv it))
-    (mapc #'elfeed-search-update-entry entries)
-    (unless (use-region-p) (forward-line))))
-
-(define-key elfeed-search-mode-map (kbd "v") 'elfeed-view-mpv)))
-#+end_src
 
 ** Edit-server
 This package allows to edit a textbox in a browser (with the related
 extension installed) using an Emacs buffer.
 #+begin_src emacs-lisp
-  (use-package edit-server
-    :commands edit-server-start
-    :init (if after-init-time
-		(edit-server-start)
-	      (add-hook 'after-init-hook
-			#'(lambda() (edit-server-start))))
-    :config (setq edit-server-new-frame-alist
-		  '((name . "Edit with Emacs FRAME")
-		    (top . 200)
-		    (left . 200)
-		    (width . 80)
-		    (height . 25)
-		    (minibuffer . t)
-		    (menu-bar-lines . t)
-		    (window-system . x))))
-
   (use-package atomic-chrome
-    :init (atomic-chrome-start-server))
-#+end_src
-
-** Magit
-One of the most famous Emacs package, I never needed to edit the
-defaults.
-#+begin_src emacs-lisp
-(use-package magit)
-#+end_src
-
-** Zoom
-At the moment I'm not using it should automatically resize Emacs
-windows in order to mantain specifit ratios, e.g. the golden ratio.
-#+begin_src emacs-lisp
-(use-package zoom)
-#+end_src
-
-** Dired+
-
-Installed directly from a script fetched on emacswiki, it adds new
-features to Dired.
-#+begin_src emacs-lisp
-  ;; (use-package dired+
-  ;;   :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
-  ;;   :defer 1
-  ;;   :init
-  ;;   (setq diredp-hide-details-initially-flag nil)
-  ;;   (setq diredp-hide-details-propagate-flag nil)
-
-  ;;   :config
-  ;;   (diredp-toggle-find-file-reuse-dir 1))
-#+end_src
-** Working with React
-#+begin_src emacs-lisp
-  (use-package typescript-mode)
-
-  (use-package rjsx-mode)
-
-  (use-package tide
-    :ensure t
-    :after (typescript-mode company flycheck)
-    :hook ((typescript-mode . tide-setup)
-	   (typescript-mode . tide-hl-identifier-mode)
-	      (before-save . tide-format-before-save))
-      :config (progn
-      (defun setup-tide-mode ()
-      (interactive)
-      (tide-setup)
-      (flycheck-mode +1)
-      (setq flycheck-check-syntax-automatically '(save mode-enabled))
-      (eldoc-mode +1)
-      (tide-hl-identifier-mode +1)
-      ;; company is an optional dependency. You have to
-      ;; install it separately via package-install
-      ;; `M-x package-install [ret] company`
-      (company-mode +1))
-
-      ;; aligns annotation to the right hand side
-      (setq company-tooltip-align-annotations t)
-
-      ;; formats the buffer before saving
-      (add-hook 'before-save-hook 'tide-format-before-save)
-      (add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-      ;; to manage tsx files
-      (require 'web-mode)
-      (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-      (add-hook 'web-mode-hook
-	      (lambda ()
-		  (when (string-equal "tsx" (file-name-extension buffer-file-name))
-		  (setup-tide-mode))))
-      ;; enable typescript-tslint checker
-      (flycheck-add-mode 'typescript-tslint 'web-mode)))
-
-#+end_src
-** Journal
-I keep a journal with my notes, when I save an entry it's
-automatically committed and pushed on a remote repository.
-
-#+begin_src emacs-lisp
-  (use-package org-journal
-    :init (progn
-	    (add-hook 'after-save-hook
-		      (lambda ()
-			(async-shell-command "git add * && git commit -m 'Automatic' && git push origin master")
-		      nil 'make-it-local))
-	    ;; Change default prefix key; needs to be set before loading org-journal
-	    (setq org-journal-prefix-key "C-x j"))
-    :config
-    (setq org-journal-dir "~/journal/"
-	  org-journal-file-format "%Y%m%d.org"
-	  org-journal-file-type 'daily
-	  org-journal-date-format "%A, %d %B %Y"))
+    :config (atomic-chrome-start-server))
 #+end_src
