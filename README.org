@@ -231,6 +231,12 @@ However this is really stable and I never had problems.
      ("C-<tab>" . company-try-hard)))
 #+end_src
 
+*** Git
+    
+#+begin_src emacs-lisp
+  (use-package magit)
+#+end_src
+
 *** Solidity
     
 #+begin_src emacs-lisp
@@ -251,11 +257,42 @@ However this is really stable and I never had problems.
   (use-package company-jedi)
 #+end_src
 
+*** LSP
+    #+begin_src emacs-lisp
+      (use-package lsp-mode
+	:init
+	;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+	(setq lsp-keymap-prefix "C-c l")
+	:hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+	       (XXX-mode . lsp)
+	       ;; if you want which-key integration
+	       (lsp-mode . lsp-enable-which-key-integration))
+	:commands lsp)
+
+      ;; optionally
+      (use-package lsp-ui :commands lsp-ui-mode)
+      ;; if you are helm user
+      (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+      ;; optionally if you want to use debugger
+      (use-package dap-mode)
+      ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+      ;; optional if you want which-key integration
+      (use-package which-key
+	:config
+	(which-key-mode))
+      (add-hook 'haskell-mode-hook #'lsp)
+      (add-hook 'haskell-literate-mode-hook #'lsp)
+    #+end_src
+
 *** Haskell
     #+begin_src emacs-lisp
 (use-package haskell-mode)
+(use-package lsp-haskell)
+(use-package dap-haskell)
     #+end_src
-
+    
 *** Nix
     #+begin_src emacs-lisp
 (use-package nix-mode
@@ -270,12 +307,15 @@ However this is really stable and I never had problems.
 (use-package helm-nixos-options)
 #+end_src
 
-
-
-** Edit-server
-This package allows to edit a textbox in a browser (with the related
-extension installed) using an Emacs buffer.
+** Mail
+*** Notmuch
 #+begin_src emacs-lisp
-  (use-package atomic-chrome
-    :config (atomic-chrome-start-server))
+    (use-package notmuch)
+    (use-package org-notmuch)
+#+end_src
+*** SMTP settings
+#+begin_src emacs-lisp
+  (setq smtpmail-smtp-server "smtp.autistici.org"
+	smtpmail-smtp-service 587
+	smtpmail-local-domain "")
 #+end_src
