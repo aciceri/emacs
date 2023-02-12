@@ -7,7 +7,7 @@ on:
       - update_flake_lock_action
 
 jobs:
-  build-thinkpad:
+  build:
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:

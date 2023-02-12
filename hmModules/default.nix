@@ -1,7 +1,8 @@
-{self, inputs, ...}: {
-  flake.overlays.default = self: super: {
-    ccrEmacs = self.packages.${self.system}.ccrEmacs;
-  };
+{
+  self,
+  inputs,
+  ...
+}: {
   flake.hmModules = {
     default = self.hmModules.ccrEmacs;
     ccrEmacs = {
@@ -22,9 +23,9 @@
         ccrEmacsConfig = config.ccrEmacs;
       in
         lib.mkIf ccrEmacsConfig.enable {
-          nixpkgs.overlays = [(self: super: {
-            ccrEmacs = super.hello;
-          })];
+          nixpkgs.overlays = [
+            inputs.emacs-overlay.overlays.default
+          ];
           programs.emacs = {
             enable = true;
             package = ccrEmacsConfig.package;
@@ -62,13 +63,13 @@
             ]);
           home.activation = {
             cloneCcrEmacsFlake = lib.hm.dag.entryAfter ["writeBoundary"] ''
-            PATH=$PATH:${lib.makeBinPath (with pkgs; [ git openssh ])}
-            if [ ! -d "$HOME/.config/emacs" ]; then
-              $DRY_RUN_CMD git clone \
-                https://github.com/aciceri/emacs.git \
-                "$HOME/.config/emacs"
-              ln -s "$HOME/.config/emacs" "$HOME/emacs"
-            fi
+              PATH=$PATH:${lib.makeBinPath (with pkgs; [git openssh])}
+              if [ ! -d "$HOME/.config/emacs" ]; then
+                $DRY_RUN_CMD git clone \
+                  https://github.com/aciceri/emacs.git \
+                  "$HOME/.config/emacs"
+                ln -s "$HOME/.config/emacs" "$HOME/emacs"
+              fi
             '';
           };
         };
