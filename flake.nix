@@ -7,8 +7,8 @@
     emacs-src = {
       url = "git://git.savannah.gnu.org/emacs.git?branch=emacs29";
       flake = false;
+      inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     };
-    nixpkgs.follows = "emacs-overlay/nixpkgs";
   };
 
   outputs = inputs @ {
@@ -20,7 +20,6 @@
       systems = ["x86_64-linux"];
       imports = [
         ./packages
-
         ./hmModules
         ./formatter
       ];
@@ -28,11 +27,11 @@
 
   nixConfig = {
     extra-substituters = [
-      "https://aciceri-fleet.cachix.org"
+      "https://aciceri-emacs.cachix.org"
       "https://nix-community.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "aciceri-fleet.cachix.org-1:e1AodrwmzRWy0eQi3lUY71M41fp9Sq+UpuKKv705xsI="
+      "aciceri-emacs.cachix.org-1:kxDGDFWV6LUj41tb8xmPRBI56UJSZOVveN49LZDUKdA="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
   };

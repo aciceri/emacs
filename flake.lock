@@ -102,15 +102,26 @@
         "type": "github"
       }
     },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1670498129,
+        "narHash": "sha256-QOWbsKObHxNpBzrIVJrgR2TGQdwyYNFgBdoVCCvYuDU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "52665b05cfd702e12b877aa519b62374d003231a",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
     "root": {
       "inputs": {
         "emacs-overlay": "emacs-overlay",
         "emacs-src": "emacs-src",
         "flake-parts": "flake-parts",
-        "nixpkgs": [
-          "emacs-overlay",
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs_2"
       }
     }
   },
