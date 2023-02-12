@@ -22,7 +22,7 @@
         .overrideAttrs (_: {
           name = "ccr-emacs-${inputs.emacs-src.rev}";
           src = inputs.emacs-src.outPath;
-          version = inputs.emacs-src.rev;
+          version = "29";
         });
       ccrEmacs =
         (emacsPackagesFor self'.packages.ccrEmacsWithoutPackages).emacsWithPackages

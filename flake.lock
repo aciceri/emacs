@@ -22,17 +22,18 @@
     "emacs-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1676205563,
-        "narHash": "sha256-anRfug+WyfWr0HRhdmo65Z1Ey15BrtJzJEMPsuwCVsY=",
-        "ref": "refs/heads/master",
-        "rev": "ac2c7a28da0b1bbed0fc92723c041b739b821977",
-        "revCount": 164935,
+        "lastModified": 1676224660,
+        "narHash": "sha256-9CkPx2CHhrwLoDerjMgYnFxeTC3f8IBf8F9rxVldxe0=",
+        "ref": "emacs-29",
+        "rev": "eb2b0931cf1258b875b031f81a3685eda8ddf5cb",
+        "revCount": 164478,
         "type": "git",
-        "url": "git://git.savannah.gnu.org/emacs.git?branch=emacs29"
+        "url": "git://git.savannah.gnu.org/emacs.git"
       },
       "original": {
+        "ref": "emacs-29",
         "type": "git",
-        "url": "git://git.savannah.gnu.org/emacs.git?branch=emacs29"
+        "url": "git://git.savannah.gnu.org/emacs.git"
       }
     },
     "flake-parts": {
@@ -102,26 +103,15 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1670498129,
-        "narHash": "sha256-QOWbsKObHxNpBzrIVJrgR2TGQdwyYNFgBdoVCCvYuDU=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "52665b05cfd702e12b877aa519b62374d003231a",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "type": "indirect"
-      }
-    },
     "root": {
       "inputs": {
         "emacs-overlay": "emacs-overlay",
         "emacs-src": "emacs-src",
         "flake-parts": "flake-parts",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": [
+          "emacs-overlay",
+          "nixpkgs"
+        ]
       }
     }
   },

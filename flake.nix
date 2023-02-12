@@ -5,10 +5,10 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     emacs-src = {
-      url = "git://git.savannah.gnu.org/emacs.git?branch=emacs29";
+      url = "git://git.savannah.gnu.org/emacs.git?ref=emacs-29";
       flake = false;
-      inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     };
+    nixpkgs.follows = "emacs-overlay/nixpkgs";
   };
 
   outputs = inputs @ {
