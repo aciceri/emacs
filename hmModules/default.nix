@@ -31,11 +31,13 @@
             package = ccrEmacsConfig.package;
           };
           services.emacs = {
-            enable = true;
-            client.enable = true;
-            defaultEditor = true;
-            socketActivation.enable = true;
-            startWithUserSession = true;
+            # TODO Re-enable, this is causing some problems with magit, probably it
+            # would be sufficient disabling `socketActivation`
+            enable = false;
+            client.enable = false;
+            defaultEditor = false;
+            socketActivation.enable = false;
+            startWithUserSession = false;
           };
           home.packages = with pkgs;
             [

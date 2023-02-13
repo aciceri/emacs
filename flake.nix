@@ -24,7 +24,7 @@
         ./formatter
       ];
     };
-
+  
   nixConfig = {
     extra-substituters = [
       "https://aciceri-emacs.cachix.org"
