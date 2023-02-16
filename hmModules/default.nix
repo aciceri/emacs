@@ -31,13 +31,16 @@
             package = ccrEmacsConfig.package;
           };
           services.emacs = {
-            # TODO Re-enable, this is causing some problems with magit, probably it
-            # would be sufficient disabling `socketActivation`
-            enable = false;
-            client.enable = false;
-            defaultEditor = false;
+            enable = true;
+            client.enable = true;
+            defaultEditor = true;
             socketActivation.enable = false;
-            startWithUserSession = false; # when I log out I don't want Emacs server to exit
+            startWithUserSession = false;
+          };
+          systemd.user.sessionVariables = {
+            # TODO user `gpgconf --list-dirs agent-ssh-socket`
+            # and better manage when gpg is not installed (do not make magit crash)
+            SSH_AUTH_SOCK = "/run/user/1000/gnupg/S.gpg-agent.ssh";
           };
           home.packages = with pkgs;
             [
