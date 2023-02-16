@@ -37,7 +37,7 @@
             client.enable = false;
             defaultEditor = false;
             socketActivation.enable = false;
-            startWithUserSession = false;
+            startWithUserSession = false; # when I log out I don't want Emacs server to exit
           };
           home.packages = with pkgs;
             [
@@ -70,7 +70,7 @@
                 $DRY_RUN_CMD git clone \
                   https://github.com/aciceri/emacs.git \
                   "$HOME/.config/emacs"
-                ln -s "$HOME/.config/emacs" "$HOME/emacs"
+                $DRY_RUN_CMD ln -s "$HOME/.config/emacs" "$HOME/emacs"
               fi
             '';
           };
