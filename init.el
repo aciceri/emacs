@@ -254,6 +254,9 @@
   (:global "C-c o e" ccr/eshell-new
 	   "C-c o t" ccr/vterm-new))
 
+(setup vterm
+  (:option vterm-timer-delay 0.01))
+
 (setup magit
   (:global "C-c o g" magit))
 
