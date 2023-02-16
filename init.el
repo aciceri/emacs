@@ -19,13 +19,29 @@
       (dolist (feature (nreverse features))
         (setq body `(with-eval-after-load ',feature ,body)))
       body))
-  :documentation "Load the cvurrent feature after FEATURES.")
+  :documentation "Load the current feature after FEATURES.")
 
-(setup fira-code-mode (when (display-graphic-p) (global-fira-code-mode)))
+
+(setup ligatures
+  (ligature-set-ligatures 't '("www"))
+  (ligature-set-ligatures 'prog-mode '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+                                       ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+                                       "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+                                       "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+                                       "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
+                                       "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+                                       "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+                                       "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+                                       "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+                                       "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+  (global-ligature-mode 't)
+)
+
 
 (setup flycheck
   (:require flycheck)
   (:hook-into prog-mode)
+  ;; FIXME the following requires the same fix as `fira-code-mode`
   (if (display-graphic-p) (:hook flycheck-posframe-mode) (:hook flycheck-inline-mode)))
 
 (setup eglot
@@ -43,8 +59,10 @@
 	   backup-directory-alist `(("." . ,temporary-file-directory))
 	   auto-save-files-name-transforms `((".*" ,temporary-file-directory t))
 	   backup-by-copying t)
-
-  (set-face-attribute 'default nil :font "Fira Code 12")
+  (defun ccr/set-faces () (set-face-attribute 'default nil :font "Fira Code 12"))
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook #'ccr/set-faces)
+      (ccr/set-faces))
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
@@ -52,7 +70,7 @@
   (global-auto-revert-mode t)
   (show-paren-mode 1)
   (column-number-mode 1)
-  (unless (display-graphic-p)
+  (unless (display-graphic-p) ;; FIXME make it work when starting Emacs as daemon
     (advice-add 'enable-theme
 		:after
 		#'(lambda (&rest rest)

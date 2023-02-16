@@ -11,7 +11,6 @@ with epkgs; [
   orderless
   embark
   embark-consult
-  fira-code-mode
   vterm
   setup
   magit
@@ -43,4 +42,5 @@ with epkgs; [
   dirvish
   diredfl
   pdf-tools
+  ligature
 ]
