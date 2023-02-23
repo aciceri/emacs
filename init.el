@@ -269,6 +269,8 @@
     "Open a new instance of vterm"
     (interactive)
     (vterm 'N))
+  (:hook esh-autosuggest-mode)
+  (eshell-syntax-highlighting-global-mode +1)
   (:global "C-c o e" ccr/eshell-new
 	   "C-c o t" ccr/vterm-new))
 
@@ -428,6 +430,32 @@
 	   delete-by-moving-to-trash t
 	   dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
   (:with-mode dirvish-directory-view-mode (:hook diredfl-mode)))
+
+;; TODO play with skacle/sway.el
+
+;; (setq shackle-default-rule '(:frame t)
+;;       shackle-display-buffer-frame-function 'sway-shackle-display-buffer-frame)
+
+;; (sway-socket-tracker-mode)
+;; (sway-undertaker-mode) ;; If you want to use :dedicate, read below.
+;; (sway-x-focus-through-sway-mode) ;; Temporary workaround for Sway bug 6216
+
+;; ;; To use with pgtk Emacs, you *must* ensure that frame names are
+;; ;; unique.  This is a way to achieve this:
+;; (setq frame-title-format '("%b — GNU Emacs [" (:eval (frame-parameter (selected-frame) 'window-id)) "]"))
+;; ;; You may want to make this nicer, feel free to improve.  The only
+;; ;; requirement is that each frame must have a strictly unique name on
+;; ;; that Emacs instance (name collisions with other programs, including
+;; ;; other Emacs processes, are not an issue )
+
+;; (setq shackle-rules
+;;       `(("*Help*" :select t :frame t :dedicate t))
+
+;;       shackle-default-rule '(:frame t)
+;;       shackle-default-size 0.4
+;;       shackle-inhibit-window-quit-on-same-windows t
+;;       shackle-display-buffer-frame-function 'sway-shackle-display-buffer-frame)
+
 
 (provide 'init)
 ;;; init.el ends here

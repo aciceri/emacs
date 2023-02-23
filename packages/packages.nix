@@ -43,4 +43,11 @@ with epkgs; [
   diredfl
   pdf-tools
   ligature
+
+  esh-autosuggest
+  eshell-syntax-highlighting
+  
+  # TODO playing with these
+  sway
+  shackle
 ]
