@@ -43,9 +43,10 @@ with epkgs; [
   diredfl
   pdf-tools
   ligature
-
   esh-autosuggest
   eshell-syntax-highlighting
+  projectile
+  consult-projectile
   
   # TODO playing with these
   sway

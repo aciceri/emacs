@@ -1,4 +1,5 @@
 name: update-flake-lock
+
 on:
   workflow_dispatch: # allows manual triggering
   schedule:
@@ -11,19 +12,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - uses: cachix/install-nix-action@v19
+      - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: |
             accept-flake-config = true
+            
       - uses: cachix/cachix-action@v12
         with:
           name: aciceri-emacs
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v16
+        uses: aciceri/update-flake-lock@main
         with:
+          custom-logic: |
+            EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+            echo "DIFF_CLOSURES<<$EOF" >> $GITHUB_ENV
+            nix run .#diff-closures | sed 's/^ *//g' >> $GITHUB_ENV
+            echo "$EOF" >> $GITHUB_ENV
           pr-title: "Automatic `flake.lock` update"
+          pr-body: |
+            # Automatic update
+            ## Inputs updated
+            ```
+              {{ env.GIT_COMMIT_MESSAGE }}
+            ```
+            ## Closures diff
+            ```
+            {{ env.DIFF_CLOSURES }}
+            ```
           pr-labels: |
             flake-inputs
             automatic

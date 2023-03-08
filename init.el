@@ -41,7 +41,6 @@
 (setup flycheck
   (:require flycheck)
   (:hook-into prog-mode)
-  ;; FIXME the following requires the same fix as `fira-code-mode`
   (if (display-graphic-p) (:hook flycheck-posframe-mode) (:hook flycheck-inline-mode)))
 
 (setup eglot
@@ -168,6 +167,10 @@
 	   "C-c w l" #'windmove-right
 	   "C-c w j" #'windmove-down
 	   "C-c w h" #'windmove-left
+	   "M-k" #'windmove-up
+	   "M-l" #'windmove-right
+	   "M-j" #'windmove-down
+	   "M-h" #'windmove-left
 	   "C-c w <up>" #'windmove-up
 	   "C-c w <right>" #'windmove-right
 	   "C-c w <down>" #'windmove-down
@@ -261,18 +264,10 @@
               cape-dabbrev-min-length 5))
 
 (setup eshell
-  (defun ccr/eshell-new ()
-    "Open a new instance of eshell"
-    (interactive)
-    (eshell 'N))
-  (defun ccr/vterm-new ()
-    "Open a new instance of vterm"
-    (interactive)
-    (vterm 'N))
   (:hook esh-autosuggest-mode)
   (eshell-syntax-highlighting-global-mode +1)
-  (:global "C-c o e" ccr/eshell-new
-	   "C-c o t" ccr/vterm-new))
+  (:global "C-c o e" #'projectile-run-eshell
+	   "C-c o t" #'projectile-run-vterm))
 
 (setup vterm
   (:option vterm-timer-delay 0.01))
@@ -283,10 +278,17 @@
 (setup yaml-mode
   (add-to-list 'auto-mode-alist '("\\.y(a?)ml\\'" . yaml-mode))
    (add-hook 'yaml-mode-hook ;; TODO use a more idiomatic style according to setup.el
-	     '(lambda ()
+	     #'(lambda ()
 		(define-key yaml-mode-map "\C-m" 'newline-and-indent))))
 
 (setup hl-todo (global-hl-todo-mode))
+
+(setup projectile
+  (:option projectile-project-search-path '("~/projects/" "~/mlabs/"))
+  ;; (:bind-into projectile-command-map
+  ;;   "DEL" #'vertico-directory-delete-char
+  ;;   "C-DEL" #'vertico-directory-delete-word)
+  )
 
 (setup meow
   (:require meow)
