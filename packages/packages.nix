@@ -15,6 +15,8 @@ with epkgs; [
   setup
   magit
   magit-delta
+  forge
+  code-review
   diff-hl
   corfu
   corfu-terminal
