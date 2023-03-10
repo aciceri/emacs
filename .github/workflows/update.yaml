@@ -35,7 +35,7 @@ jobs:
             # Automatic update
             ## Inputs updated
             ```
-              {{ env.GIT_COMMIT_MESSAGE }}
+            {{ env.GIT_COMMIT_MESSAGE }}
             ```
             ## Closures diff
             ```
