@@ -58,7 +58,9 @@
 	   backup-directory-alist `(("." . ,temporary-file-directory))
 	   auto-save-files-name-transforms `((".*" ,temporary-file-directory t))
 	   backup-by-copying t)
-  (defun ccr/set-faces () (set-face-attribute 'default nil :font "Fira Code 12"))
+  (defun ccr/set-faces ()
+    (set-face-attribute 'default nil :font "Fira Code 12")
+    (meow--prepare-face))
   (if (daemonp)
       (add-hook 'server-after-make-frame-hook #'ccr/set-faces)
       (ccr/set-faces))
@@ -291,8 +293,7 @@
   )
 
 (setup meow
-  (:require meow)
-  (:option meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  (meow-global-mode 1)
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev)
@@ -377,8 +378,7 @@
    '("Y" . meow-sync-grab)
    '("z" . meow-pop-selection)
    '("'" . repeat)
-   '("<escape>" . ignore))
-  (meow-global-mode 1))
+   '("<escape>" . ignore)))
 
 (setup popper
   (:option
