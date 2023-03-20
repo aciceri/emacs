@@ -49,7 +49,10 @@ with epkgs; [
   eshell-syntax-highlighting
   projectile
   consult-projectile
-  
+  eat
+  rust-mode
+  rustic
+
   # TODO playing with these
   sway
   shackle

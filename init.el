@@ -60,7 +60,8 @@
 	   backup-by-copying t)
   (defun ccr/set-faces ()
     (set-face-attribute 'default nil :font "Fira Code 12")
-    (meow--prepare-face))
+    ;; (meow--prepare-face)
+    )
   (if (daemonp)
       (add-hook 'server-after-make-frame-hook #'ccr/set-faces)
       (ccr/set-faces))
@@ -125,6 +126,8 @@
        (global-nix-prettify-mode))
 
 (setup haskell-mode (:hook eglot-ensure tree-sitter-hl-mode))
+
+(setup rust-mode (:hook eglot-ensure tree-sitter-hl-mode))
 
 (setup terraform-mode (:hook eglot-ensure tree-sitter-hl-mode))
 
@@ -266,10 +269,19 @@
               cape-dabbrev-min-length 5))
 
 (setup eshell
+  (:require projectile)
   (:hook esh-autosuggest-mode)
+  (:with-mode eshell-load (:hook #'eat-eshell-mode #'eat-eshell-visual-command-mode))
   (eshell-syntax-highlighting-global-mode +1)
+  (defun ccr/projectile-run-eat (&optional arg)
+    (interactive "P")
+    (let ((project (projectile-acquire-root)))
+      (projectile-with-default-dir project
+				   (let ((eat-buffer-name (projectile-generate-process-name "eat" arg project)))
+				     (eat)))))
   (:global "C-c o e" #'projectile-run-eshell
-	   "C-c o t" #'projectile-run-vterm))
+	   "C-c o t" #'ccr/projectile-run-eat
+	   "C-c o v" #'projectile-run-vterm))
 
 (setup vterm
   (:option vterm-timer-delay 0.01))
@@ -391,6 +403,7 @@
 			      "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
 			      "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
 			      "^\\*term.*\\*$"   term-mode   ;term as a popup
+			      "^\\*eat.*\\*$"   term-mode   ;eat as a popup
 			      "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
 			      )
    popper-echo-lines 1
@@ -461,3 +474,16 @@
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(lsp-mode diff-hl org-roam-ui consult-flycheck dirvish flycheck-inline orderless diredfl rustic ef-themes corfu-doc which-key popper envrc flycheck-posframe pdf-tools embark-consult vertico tree-sitter-langs paredit ligature hl-todo vterm yaml-mode eat kind-icon terraform-mode sway corfu-terminal shackle consult-projectile magit-delta nix-mode code-review haskell-mode delight marginalia meow eshell-syntax-highlighting all-the-icons-completion esh-autosuggest cape setup)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

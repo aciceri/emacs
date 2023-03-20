@@ -35,7 +35,7 @@
             client.enable = true;
             defaultEditor = true;
             socketActivation.enable = false;
-            startWithUserSession = false;
+            startWithUserSession = true;
           };
           systemd.user.sessionVariables = {
             # TODO user `gpgconf --list-dirs agent-ssh-socket`
