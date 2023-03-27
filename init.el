@@ -60,11 +60,12 @@
 	   backup-by-copying t)
   (defun ccr/set-faces ()
     (set-face-attribute 'default nil :font "Fira Code 12")
-    ;; (meow--prepare-face)
-    )
+    (set-face-background 'vertical-border (face-background 'default))
+    (meow--prepare-face)
+    (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?┃)))
   (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'ccr/set-faces)
-      (ccr/set-faces))
+    (add-hook 'server-after-make-frame-hook #'ccr/set-faces)
+    (ccr/set-faces))
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
@@ -72,16 +73,16 @@
   (global-auto-revert-mode t)
   (show-paren-mode 1)
   (column-number-mode 1)
-  (unless (display-graphic-p) ;; FIXME make it work when starting Emacs as daemon
-    (advice-add 'enable-theme
-		:after
-		#'(lambda (&rest rest)
-		    (let* ((bg-color (face-attribute 'default :background))
-			   (ansi-command (format "\033]11;#%s\007"
-						 (string-remove-prefix "#" bg-color))))
-		      (send-string-to-terminal ansi-command))))
-    (defun reset-terminal () (send-string-to-terminal "\033c"))
-    (add-hook 'kill-emacs-hook #'reset-terminal))
+  (advice-add 'enable-theme
+	      :after
+	      #'(lambda (&rest rest)
+		  (set-face-background 'vertical-border (face-background 'default))
+		  (let* ((bg-color (face-attribute 'default :background))
+			 (ansi-command (format "\033]11;#%s\007"
+					       (string-remove-prefix "#" bg-color))))
+		    (send-string-to-terminal ansi-command))))
+  (defun reset-terminal () (send-string-to-terminal "\033c"))
+  (add-hook 'kill-emacs-hook #'reset-terminal)
   (ef-themes-select 'ef-day)
 
   (defun ccr/reload-emacs ()
@@ -426,7 +427,16 @@
 	   "C-c n j" org-roam-dailies-capture-today)
   (org-roam-db-autosync-mode))
 
-(setup diff-hl (global-diff-hl-mode))
+
+
+(setup diff-hl
+  (global-diff-hl-mode 1)
+  (defun maybe-diff-hl-margin-mode ()
+    (unless (display-graphic-p) (diff-hl-margin-mode)))
+  (when (daemonp)
+    ;; FIXME not optimal, after the first time that a client creates a frame all the other frames
+    ;; will use `diff-hl-margin-mode`, even if they are graphical
+    (add-hook 'server-after-make-frame-hook #'maybe-diff-hl-margin-mode)))
 
 (setup dirvish
   (dirvish-override-dired-mode)
