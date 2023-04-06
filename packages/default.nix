@@ -1,4 +1,4 @@
-{inputs, ...}: {
+{inputs, self, ...}: {
   imports = [
     inputs.flake-parts.flakeModules.easyOverlay
   ];
@@ -52,4 +52,6 @@
       default = self'.apps.ccrEmacs;
     };
   };
+
+  flake.hydraJobs.emacs = self.packages.x86_64-linux; 
 }
