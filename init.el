@@ -73,14 +73,15 @@
   (global-auto-revert-mode t)
   (show-paren-mode 1)
   (column-number-mode 1)
-  (advice-add 'enable-theme
-	      :after
-	      #'(lambda (&rest rest)
-		  (set-face-background 'vertical-border (face-background 'default))
-		  (let* ((bg-color (face-attribute 'default :background))
-			 (ansi-command (format "\033]11;#%s\007"
-					       (string-remove-prefix "#" bg-color))))
-		    (send-string-to-terminal ansi-command))))
+  ;; FIXME when running running Emacs as daemon
+  ;; (advice-add 'enable-theme
+  ;; 	      :after
+  ;; 	      #'(lambda (&rest rest)
+  ;; 		  (set-face-background 'vertical-border (face-background 'default))
+  ;; 		  (let* ((bg-color (face-attribute 'default :background))
+  ;; 			 (ansi-command (format "\033]11;#%s\007"
+  ;; 					       (string-remove-prefix "#" bg-color))))
+  ;; 		    (send-string-to-terminal ansi-command))))
   (defun reset-terminal () (send-string-to-terminal "\033c"))
   (add-hook 'kill-emacs-hook #'reset-terminal)
   (ef-themes-select 'ef-day)
