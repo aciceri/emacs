@@ -23,6 +23,7 @@
         ./hmModules
         ./formatter
         ./diff-closures
+        ./hydra
       ];
     };
 
