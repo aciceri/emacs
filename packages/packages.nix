@@ -20,7 +20,7 @@ with epkgs; [
   diff-hl
   corfu
   corfu-terminal
-  corfu-doc
+  # corfu-doc
   kind-icon
   cape
   which-key
