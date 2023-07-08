@@ -1,4 +1,8 @@
-{inputs, self, ...}: {
+{
+  inputs,
+  self,
+  ...
+}: {
   imports = [
     inputs.flake-parts.flakeModules.easyOverlay
   ];
@@ -31,14 +35,18 @@
 
     packages = {
       ccrEmacsWithoutPackages =
-        (inputs'.emacs-overlay.packages.emacsPgtk.override {
-          treeSitterPlugins =
-            builtins.attrValues
-            (builtins.removeAttrs pkgs.tree-sitter-grammars ["recurseForDerivations"]);
+        (inputs'.emacs-overlay.packages.emacs-unstable.override {
+          # treeSitterPlugins =
+          #   builtins.attrValues
+          # (builtins.removeAttrs pkgs.tree-sitter-grammars ["recurseForDerivations"]);
+          withNS = false;
+          withX = false;
+          withGTK2 = false;
+          withGTK3 = false;
+          withWebP = false;
         })
-        .overrideAttrs (_: {
-          name = "ccr-emacs-${inputs.emacs-src.rev}";
-          src = inputs.emacs-src.outPath;
+        .overrideAttrs (old: {
+          name = "ccr-emacs";
           version = "29";
         });
       ccrEmacs =
@@ -53,5 +61,5 @@
     };
   };
 
-  flake.hydraJobs.emacs = self.packages.x86_64-linux; 
+  flake.hydraJobs.emacs = self.packages.x86_64-linux;
 }
