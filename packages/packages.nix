@@ -26,6 +26,7 @@ with epkgs; [
   which-key
   nix-mode
   envrc
+  inheritenv
   flycheck
   flycheck-posframe
   flycheck-inline
@@ -52,8 +53,7 @@ with epkgs; [
   eat
   rust-mode
   rustic
-
-  # TODO playing with these
-  sway
-  shackle
+  purescript-mode
+  tide
+  solidity-mode
 ]

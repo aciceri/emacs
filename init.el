@@ -73,21 +73,24 @@
   (global-auto-revert-mode t)
   (show-paren-mode 1)
   (column-number-mode 1)
-  (advice-add 'enable-theme
-	      :after
-	      #'(lambda (&rest rest)
-		  (set-face-background 'vertical-border (face-background 'default))
-		  (let* ((bg-color (face-attribute 'default :background))
-			 (ansi-command (format "\033]11;#%s\007"
-					       (string-remove-prefix "#" bg-color))))
-		    (send-string-to-terminal ansi-command))))
+  (set-frame-parameter (selected-frame) 'alpha '(98 98))
+  (add-to-list 'default-frame-alist '(alpha 98 98))
+  ;; FIXME when running running Emacs as daemon
+  ;; (advice-add 'enable-theme
+  ;; 	      :after
+  ;; 	      #'(lambda (&rest rest)
+  ;; 		  (set-face-background 'vertical-border (face-background 'default))
+  ;; 		  (let* ((bg-color (face-attribute 'default :background))
+  ;; 			 (ansi-command (format "\033]11;#%s\007"
+  ;; 					       (string-remove-prefix "#" bg-color))))
+  ;; 		    (send-string-to-terminal ansi-command))))
   (defun reset-terminal () (send-string-to-terminal "\033c"))
   (add-hook 'kill-emacs-hook #'reset-terminal)
   (ef-themes-select 'ef-day)
 
   (defun ccr/reload-emacs ()
     (interactive)
-    (load-file "~/.vanilla-emacs.d/init.el"))
+    (load-file "~/.config/emacs/init.el"))
 
   (defun ccr/run-in-vterm-kill (process event)
   "A process sentinel. Kills PROCESS's buffer if it is live."
@@ -128,7 +131,12 @@
 
 (setup haskell-mode (:hook eglot-ensure tree-sitter-hl-mode))
 
-(setup rust-mode (:hook eglot-ensure tree-sitter-hl-mode))
+(setup purescript-mode)
+
+(setup rustic-mode
+  (:hook eglot-ensure tree-sitter-hl-mode)
+  (push 'rustic-clippy flycheck-checkers)
+  (:option rustic-lsp-client 'eglot))
 
 (setup terraform-mode (:hook eglot-ensure tree-sitter-hl-mode))
 
@@ -140,7 +148,9 @@
   (:hook enable-paredit-mode)
   (:with-mode emacs-lisp-mode (:hook enable-paredit-mode)))
 
-(setup envrc (envrc-global-mode))
+(setup envrc
+  (require 'inheritenv)
+  (envrc-global-mode))
 
 (setup windmove
   (defcustom ccr/v-resize-amount 4
