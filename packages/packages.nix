@@ -1,12 +1,17 @@
 pkgs: epkgs:
 with epkgs; [
   meow
-  ef-themes
+  dracula-theme
+  nerd-icons
+  nerd-icons-completion
+  nerd-icons-ibuffer
+  nerd-icons-dired
+  treemacs-nerd-icons
+  sideline
+  sideline-flymake
   delight
   vertico
   marginalia
-  all-the-icons
-  all-the-icons-completion
   consult
   orderless
   embark
@@ -20,17 +25,12 @@ with epkgs; [
   diff-hl
   corfu
   corfu-terminal
-  # corfu-doc
   kind-icon
   cape
   which-key
   nix-mode
   envrc
   inheritenv
-  flycheck
-  flycheck-posframe
-  flycheck-inline
-  consult-flycheck
   popper
   paredit
   tree-sitter

@@ -1,8 +1,8 @@
 ;; package --- Summary
 ;;; Commentary:
 ;; TODO
-;; - org-roam
-;; - org goodies
+;; - use-package is part of vim now, let's use it instead of setup.el!
+;; - org-roam;; - org goodies
 ;; - persp-mode
 ;; - understand how cape works
 ;; - dirvish
@@ -13,38 +13,22 @@
 
 (require 'setup)
 
-(setup-define :load-after
-  (lambda (&rest features)
-    (let ((body `(require ',(setup-get 'feature))))
-      (dolist (feature (nreverse features))
-        (setq body `(with-eval-after-load ',feature ,body)))
-      body))
-  :documentation "Load the current feature after FEATURES.")
-
-
-(setup ligatures
-  (ligature-set-ligatures 't '("www"))
-  (ligature-set-ligatures 'prog-mode '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
-                                       ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
-                                       "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
-                                       "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
-                                       "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
-                                       "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
-                                       "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
-                                       "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
-                                       "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
-                                       "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
-  (global-ligature-mode 't)
-)
-
-
-(setup flycheck
-  (:require flycheck)
-  (:hook-into prog-mode)
-  (if (display-graphic-p) (:hook flycheck-posframe-mode) (:hook flycheck-inline-mode)))
-
 (setup eglot
-  (:with-mode eglot--managed-mode (:hook (lambda () (flymake-mode -1)))))
+  (:with-mode eglot--managed-mode (:hook flymake-mode)))
+
+(setup flymake
+  (push `(before-string . ,(propertize "E" 'display '((margin left-margin) "E"))) (get :error 'flymake-overlay-control))
+  (push `(before-string . ,(propertize "W" 'display '((margin left-margin) "W"))) (get :warning 'flymake-overlay-control))
+  (push `(before-string . ,(propertize "N" 'display '((margin left-margin) "N"))) (get :note 'flymake-overlay-control))
+  (push '(priority . 1098) (get :error 'flymake-overlay-control))
+  (push '(priority . 1099) (get :warning 'flymake-overlay-control))
+  (push '(priority . 1100) (get :note 'flymake-overlay-control))
+  (:hook-into prog-mode))
+
+(setup sideline
+  (:with-mode flymake-mode (:hook sideline-mode))
+  (:option sideline-flymake-display-mode 'line
+	   sideline-backends-right '(sideline-flymake)))
 
 (setup emacs
   (:option use-dialog-box nil
@@ -58,45 +42,38 @@
 	   backup-directory-alist `(("." . ,temporary-file-directory))
 	   auto-save-files-name-transforms `((".*" ,temporary-file-directory t))
 	   backup-by-copying t)
-  (defun ccr/set-faces ()
-    (set-face-attribute 'default nil :font "Fira Code 12")
-    (set-face-background 'vertical-border (face-background 'default))
-    (meow--prepare-face)
-    (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?┃)))
-  (if (daemonp)
-    (add-hook 'server-after-make-frame-hook #'ccr/set-faces)
-    (ccr/set-faces))
+  (set-face-background 'vertical-border (face-background 'default))
+  ;;(meow--prepare-face)
+  (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?┃))
   (menu-bar-mode -1)
-  (scroll-bar-mode -1)
+  (xterm-mouse-mode 1)
+  ;;(scroll-bar-mode -1)
   (tool-bar-mode -1)
   (global-hl-line-mode -1)
   (global-auto-revert-mode t)
   (show-paren-mode 1)
   (column-number-mode 1)
-  (set-frame-parameter (selected-frame) 'alpha '(98 98))
-  (add-to-list 'default-frame-alist '(alpha 98 98))
-  ;; FIXME when running running Emacs as daemon
-  ;; (advice-add 'enable-theme
-  ;; 	      :after
-  ;; 	      #'(lambda (&rest rest)
-  ;; 		  (set-face-background 'vertical-border (face-background 'default))
-  ;; 		  (let* ((bg-color (face-attribute 'default :background))
-  ;; 			 (ansi-command (format "\033]11;#%s\007"
-  ;; 					       (string-remove-prefix "#" bg-color))))
-  ;; 		    (send-string-to-terminal ansi-command))))
-  (defun reset-terminal () (send-string-to-terminal "\033c"))
-  (add-hook 'kill-emacs-hook #'reset-terminal)
-  (ef-themes-select 'ef-day)
+  
+  ;; (defun reset-terminal () (send-string-to-terminal "\033c"))
+  ;; (add-hook 'kill-emacs-hook #'reset-terminal)
 
+
+  (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
+  (global-set-key (kbd "<mouse-5>") 'scroll-up-line)
+
+  (add-hook 'server-after-make-frame-hook #'meow--prepare-face)
+
+  (load-theme 'dracula t)
+  
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
 
   (defun ccr/run-in-vterm-kill (process event)
-  "A process sentinel. Kills PROCESS's buffer if it is live."
-  (let ((b (process-buffer process)))
-    (and (buffer-live-p b)
-         (kill-buffer b))))
+    "A process sentinel. Kills PROCESS's buffer if it is live."
+    (let ((b (process-buffer process)))
+      (and (buffer-live-p b)
+           (kill-buffer b))))
 
   (defun ccr/run-in-vterm (command &optional buffer-name)
     "Run command in vterm"
@@ -119,14 +96,33 @@
     (ccr/run-in-vterm
      "sudo nixos-rebuild switch --flake /home/ccr/fleet"
      "*vterm-nixos-rebuild-switch*")))
-  
+
+(setup nerd-icons
+  (:require treemacs)
+  (:require treemacs-nerd-icons)
+  (nerd-icons-completion-mode)
+  (nerd-icons-ibuffer-mode)
+  (nerd-icons-dired-mode)
+  (add-hook 'dired-mode-hook #'nerd-icons-dired-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)
+  (add-hook 'ibuffer-mode-hook #'nerd-icons-ibuffer-mode)
+  (:option treemacs-show-cursor nil
+	   treemacs-display-current-project-exclusively t
+	   treemacs-project-follow-into-home nil)
+  (treemacs-load-theme "nerd-icons")
+  (treemacs-git-mode 'simple)
+  (setq treemacs-display-current-project-exclusively t)
+  )
+
 (setup prog-mode (:hook display-line-numbers-mode hl-line-mode))
 
 (setup which-key :option (which-key-mode))
 
 (setup magit-mode (:hook magit-delta-mode))
 
-(setup nix-mode (:hook eglot-ensure tree-sitter-hl-mode)
+(setup nix-mode (:hook
+		 eglot-ensure
+		 tree-sitter-hl-mode)
        (global-nix-prettify-mode))
 
 (setup haskell-mode (:hook eglot-ensure tree-sitter-hl-mode))
@@ -135,7 +131,7 @@
 
 (setup rustic-mode
   (:hook eglot-ensure tree-sitter-hl-mode)
-  (push 'rustic-clippy flycheck-checkers)
+  ;;(push 'rustic-clippy flycheck-checkers)
   (:option rustic-lsp-client 'eglot))
 
 (setup terraform-mode (:hook eglot-ensure tree-sitter-hl-mode))
@@ -148,6 +144,10 @@
   (:hook enable-paredit-mode)
   (:with-mode emacs-lisp-mode (:hook enable-paredit-mode)))
 
+(setup diff-hl
+  (global-diff-hl-mode 1)
+  (diff-hl-margin-mode 1))
+
 (setup envrc
   (require 'inheritenv)
   (envrc-global-mode))
@@ -158,7 +158,7 @@
     :type 'integer)
   (defcustom ccr/h-resize-amount 4
     "How many columns move when calling `ccr/h-resize`"
-    :type 'integer)  ;; (defcustom ccr/resize-rows 4)
+    :type 'integer) ;; (defcustom ccr/resize-rows 4)
   (defun ccr/v-resize (key)
     "Interactively vertically resize the window"
     (interactive "cHit >/< to enlarge/shrink")
@@ -234,8 +234,9 @@
            "C-c f" consult-find
            "C-c l" consult-line
            "C-c m" consult-mark
+	   "C-c o T" treemacs
            "C-c o o" consult-outline
-           "C-c e" #'consult-flycheck)
+           "C-c e" #'consult-flymake)
   (:option xref-show-xrefs-function #'consult-xref
            xref-show-definitions-function #'consult-xref)
   ;; Orderless
@@ -257,8 +258,6 @@
   ;; Cape
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
-  ;; All the icons completion
-  (all-the-icons-completion-mode)
   )
 
 ;; TODO configure corfu, cape, dabbrev, kind-icons
@@ -294,8 +293,8 @@
 	   "C-c o t" #'ccr/projectile-run-eat
 	   "C-c o v" #'projectile-run-vterm))
 
-(setup vterm
-  (:option vterm-timer-delay 0.01))
+(setup eat
+  (:option eat-kill-buffer-on-exit t))
 
 (setup magit
   (:global "C-c o g" magit))
@@ -392,6 +391,7 @@
    '("t" . meow-till)
    '("u" . meow-undo)
    '("U" . meow-undo-in-selection)
+   '("/" . meow-visit)
    '("v" . meow-visit)
    '("w" . meow-mark-word)
    '("W" . meow-mark-symbol)
@@ -412,10 +412,10 @@
 			      help-mode
 			      compilation-mode
 			      "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
-			      "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
-			      "^\\*term.*\\*$"   term-mode   ;term as a popup
-			      "^\\*eat.*\\*$"   term-mode   ;eat as a popup
-			      "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
+			      "^\\*shell.*\\*$"  shell-mode ;shell as a popup
+			      "^\\*term.*\\*$"   term-mode ;term as a popup
+			      "^\\*eat.*\\*$"   term-mode ;eat as a popup
+			      "^\\*vterm.*\\*$"  vterm-mode ;vterm as a popup
 			      )
    popper-echo-lines 1
    popper-mode-line nil
@@ -423,8 +423,8 @@
   (popper-mode 1)
   (popper-echo-mode 1)
   (:global "C-c t t" popper-toggle-latest
-         "C-c t c" popper-cycle
-         "C-c t p" popper-toggle-type))
+           "C-c t c" popper-cycle
+           "C-c t p" popper-toggle-type))
 
 (setup org-roam
   (:option org-roam-directory "~/roam/"
@@ -437,16 +437,6 @@
 	   "C-c n j" org-roam-dailies-capture-today)
   (org-roam-db-autosync-mode))
 
-
-
-(setup diff-hl
-  (global-diff-hl-mode 1)
-  (defun maybe-diff-hl-margin-mode ()
-    (unless (display-graphic-p) (diff-hl-margin-mode)))
-  (when (daemonp)
-    ;; FIXME not optimal, after the first time that a client creates a frame all the other frames
-    ;; will use `diff-hl-margin-mode`, even if they are graphical
-    (add-hook 'server-after-make-frame-hook #'maybe-diff-hl-margin-mode)))
 
 (setup dirvish
   (dirvish-override-dired-mode)
@@ -466,44 +456,5 @@
 	   dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
   (:with-mode dirvish-directory-view-mode (:hook diredfl-mode)))
 
-;; TODO play with skacle/sway.el
-
-;; (setq shackle-default-rule '(:frame t)
-;;       shackle-display-buffer-frame-function 'sway-shackle-display-buffer-frame)
-
-;; (sway-socket-tracker-mode)
-;; (sway-undertaker-mode) ;; If you want to use :dedicate, read below.
-;; (sway-x-focus-through-sway-mode) ;; Temporary workaround for Sway bug 6216
-
-;; ;; To use with pgtk Emacs, you *must* ensure that frame names are
-;; ;; unique.  This is a way to achieve this:
-;; (setq frame-title-format '("%b — GNU Emacs [" (:eval (frame-parameter (selected-frame) 'window-id)) "]"))
-;; ;; You may want to make this nicer, feel free to improve.  The only
-;; ;; requirement is that each frame must have a strictly unique name on
-;; ;; that Emacs instance (name collisions with other programs, including
-;; ;; other Emacs processes, are not an issue )
-
-;; (setq shackle-rules
-;;       `(("*Help*" :select t :frame t :dedicate t))
-
-;;       shackle-default-rule '(:frame t)
-;;       shackle-default-size 0.4
-;;       shackle-inhibit-window-quit-on-same-windows t
-;;       shackle-display-buffer-frame-function 'sway-shackle-display-buffer-frame)
-
-
 (provide 'init)
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(lsp-mode diff-hl org-roam-ui consult-flycheck dirvish flycheck-inline orderless diredfl rustic ef-themes corfu-doc which-key popper envrc flycheck-posframe pdf-tools embark-consult vertico tree-sitter-langs paredit ligature hl-todo vterm yaml-mode eat kind-icon terraform-mode sway corfu-terminal shackle consult-projectile magit-delta nix-mode code-review haskell-mode delight marginalia meow eshell-syntax-highlighting all-the-icons-completion esh-autosuggest cape setup)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

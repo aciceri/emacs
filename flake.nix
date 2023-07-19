@@ -6,12 +6,11 @@
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixpkgs.follows = "emacs-overlay/nixpkgs";
   };
-
+  
   outputs = inputs @ {
     flake-parts,
-    nixpkgs,
     ...
-  }:
+  } :
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux"];
       imports = [
@@ -22,7 +21,6 @@
         ./hydra
       ];
     };
-
   nixConfig = {
     extra-substituters = [
       "https://aciceri-emacs.cachix.org"
@@ -34,3 +32,6 @@
     ];
   };
 }
+
+  
+ 
