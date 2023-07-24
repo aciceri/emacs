@@ -68,22 +68,50 @@
     :config
   (load-theme 'dracula t))
 
-(use-package nerd-icons
-  :after (tremacs treemacs-nerd-icons marginalia consult)
-  :hook ((dired-mode-hook . nerd-icons-dired-mode)
-	 (marginalia-mode-hook . nerd-icons-completion-marginalia-setup)
-	 (ibuffer-mode . nerd-icons-completion-marginalia-se))
+(use-package solaire-mode
+  :hook (server-after-make-frame . (lambda () (load-theme 'dracula t))) ;; FIXME when this is closed: https://github.com/hlissner/emacs-solaire-mode/issues/46
+  :init
+  (solaire-global-mode +1)
   :config
-  (nerd-icons-completion-mode)
-  (nerd-icons-ibuffer-mode)
-  (nerd-icons-dired-mode)
-  (treemacs-load-theme "nerd-icons")
-  (treemacs-git-mode 'simple)
+  (set-face-background 'solaire-default-face "#1c1d26"))
+
+(use-package nerd-icons)
+
+(use-package nerd-icons-completion
+  :after marginalia
+  :config (nerd-icons-completion-mode +1)
+  :hook (
+	 (marginalia-mode . nerd-icons-completion-marginalia-setup)
+	 (ibuffer-mode . nerd-icons-completion-marginalia-setup)))
+
+(use-package nerd-icons-ibuffer
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+
+(use-package treemacs-nerd-icons
+  :config
+  (treemacs-load-theme "nerd-icons"))
+
+(use-package nerd-icons-dired
+    :hook
+      (dired-mode . nerd-icons-dired-mode))
+
+(use-package diredfl
+  :config (diredfl-global-mode))
+
+(use-package treemacs
+  :config
+  ;; FIXME when this is closed: https://github.com/hlissner/emacs-solaire-mode/issues/51
+  (push '(treemacs-window-background-face . solaire-default-face) solaire-mode-remap-alist)
+  (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist)
   :custom
   (treemacs-show-cursor nil)
   (treemacs-display-currenl-project-exclusively)
   (treemacs-project-followlinto-home nil)
-  (treemacs-display-current-project-exclusively t))
+  (treemacs-display-current-project-exclusively t)
+  (treemacs-git-mode 'deferred)
+  :bind (("C-c w t" . treemacs-select-window)
+	 ("C-c o T" . treemacs))
+  )
 
 (use-package meow
   :hook (server-after-make-frame . (lambda () (meow--prepare-face)))
@@ -207,7 +235,7 @@
 	   (call-interactively 'ccr/h-resize))
 	  (t (push key unread-command-events))))
   :bind (("C-c w k" . windmove-up)
-	   ("C-c w l" . #'windmove-right)
+	   ("C-c w l" . windmove-right)
 	   ("C-c w j" . windmove-down)
 	   ("C-c w h" . windmove-left)
 	   ("M-k" . windmove-up)
@@ -242,8 +270,9 @@
      ("C-DEL" . vertico-directory-delete-word))))
 
 (use-package marginalia
+  :init
+  (marginalia-mode +1)
   :custom
-  (marginalia-mode t)
   (marginalia-aligh 'right))
 
 (use-package consult
@@ -362,8 +391,8 @@
 			      "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
 			      "^\\*shell.*\\*$"  shell-mode ;shell as a popup
 			      "^\\*term.*\\*$"   term-mode ;term as a popup
-			      "^\\*eat.*\\*$"   term-mode ;eat as a popup
-			      ))
+			      "^\\*emacs-eat.*\\*$"   term-mode ;eat as a popup
+			       ))
    (popper-echo-lines 1)
    (popper-mode-line nil)
   :init

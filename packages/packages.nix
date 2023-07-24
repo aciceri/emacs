@@ -2,12 +2,13 @@ pkgs: epkgs:
 with epkgs; [
   meow
   dracula-theme
+  solaire-mode
   nerd-icons
   nerd-icons-completion
   nerd-icons-ibuffer
   nerd-icons-dired
   treemacs-nerd-icons
-  auto-dim-other-buffers
+  eat
   sideline
   sideline-flymake
   delight
@@ -17,11 +18,8 @@ with epkgs; [
   orderless
   embark
   embark-consult
-  vterm
   magit
   magit-delta
-  forge
-  code-review
   diff-hl
   corfu
   corfu-terminal
