@@ -7,6 +7,7 @@ with epkgs; [
   nerd-icons-ibuffer
   nerd-icons-dired
   treemacs-nerd-icons
+  auto-dim-other-buffers
   sideline
   sideline-flymake
   delight
@@ -17,7 +18,6 @@ with epkgs; [
   embark
   embark-consult
   vterm
-  setup
   magit
   magit-delta
   forge
@@ -40,20 +40,5 @@ with epkgs; [
   markdown-mode
   haskell-mode
   terraform-mode
-  org-roam-ui
-  org-roam
-  dirvish
   diredfl
-  pdf-tools
-  ligature
-  esh-autosuggest
-  eshell-syntax-highlighting
-  projectile
-  consult-projectile
-  eat
-  rust-mode
-  rustic
-  purescript-mode
-  tide
-  solidity-mode
 ]
