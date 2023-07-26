@@ -105,7 +105,7 @@
   (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist)
   :custom
   (treemacs-show-cursor nil)
-  (treemacs-display-currenl-project-exclusively)
+  (treemacs-display-current-project-exclusively t)
   (treemacs-project-followlinto-home nil)
   (treemacs-display-current-project-exclusively t)
   (treemacs-git-mode 'deferred)
