@@ -389,10 +389,11 @@
 			      help-mode
 			      compilation-mode
 			      "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
-			      "^\\*shell.*\\*$"  shell-mode ;shell as a popup
-			      "^\\*term.*\\*$"   term-mode ;term as a popup
-			      "^\\*emacs-eat.*\\*$"   term-mode ;eat as a popup
+			      "^\\*shell.*\\*$" shell-mode ;shell as a popup
+			      "^\\*term.*\\*$" term-mode ;term as a popup
+			      "^\\*eat.*\\*$" eat-mode ;eat as a popup
 			       ))
+   (popper-window-height 0.33)
    (popper-echo-lines 1)
    (popper-mode-line nil)
   :init
