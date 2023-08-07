@@ -61,6 +61,7 @@
               jq
               xclip
               hunspell
+              python3
             ]
             ++ (with hunspellDicts; [
               en_US-large

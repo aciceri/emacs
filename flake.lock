@@ -7,11 +7,11 @@
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
-        "lastModified": 1689306175,
-        "narHash": "sha256-8A9V2m8SsHMmn2F7SAwsbwu5QVTRR9MkX9kF48T+Qsk=",
+        "lastModified": 1691119623,
+        "narHash": "sha256-zL2Lh+tni8YfRHJl1d2btxk5gl6mlOrp/NoDu9ftBRw=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "a44ec998f6c8f04973f8e8630847157efec2bbfb",
+        "rev": "180dc7cbf6af0cae6ce6c404e9dd5ea3b3790733",
         "type": "github"
       },
       "original": {
@@ -56,13 +56,29 @@
         "type": "github"
       }
     },
+    "indent-bars": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1691423189,
+        "narHash": "sha256-NHkv6lU0WoVeQo369eWeyTFx1c+JEs1iHUDzV4hTR8Y=",
+        "owner": "jdtsmith",
+        "repo": "indent-bars",
+        "rev": "3a971623afc40532d0472c2e5c084abfcb8c5970",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jdtsmith",
+        "repo": "indent-bars",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1689192006,
-        "narHash": "sha256-QM0f0d8oPphOTYJebsHioR9+FzJcy1QNIzREyubB91U=",
+        "lastModified": 1691006197,
+        "narHash": "sha256-DbtxVWPt+ZP5W0Usg7jAyTomIM//c3Jtfa59Ht7AV8s=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2de8efefb6ce7f5e4e75bdf57376a96555986841",
+        "rev": "66aedfd010204949cb225cf749be08cb13ce1813",
         "type": "github"
       },
       "original": {
@@ -92,11 +108,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1689209875,
-        "narHash": "sha256-8AVcBV1DiszaZzHFd5iLc8HSLfxRAuqcU0QdfBEF3Ag=",
+        "lastModified": 1690927903,
+        "narHash": "sha256-D5gCaCROnjEKDOel//8TO/pOP87pAEtT0uT8X+0Bj/U=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "fcc147b1e9358a8386b2c4368bd928e1f63a7df2",
+        "rev": "bd836ac5e5a7358dea73cb74a013ca32864ccb86",
         "type": "github"
       },
       "original": {
@@ -110,6 +126,7 @@
       "inputs": {
         "emacs-overlay": "emacs-overlay",
         "flake-parts": "flake-parts",
+        "indent-bars": "indent-bars",
         "nixpkgs": [
           "emacs-overlay",
           "nixpkgs"

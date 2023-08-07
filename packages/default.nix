@@ -1,8 +1,4 @@
-{
-  inputs,
-  self,
-  ...
-}: {
+{inputs, ...}: {
   imports = [
     inputs.flake-parts.flakeModules.easyOverlay
   ];
@@ -21,6 +17,7 @@
     # Some tree-sitter grammars in nixpksg are built with a too new ABI
     # https://github.com/NixOS/nixpkgs/issues/209114
     _module.args.pkgs = inputs.nixpkgs.legacyPackages.${system}.extend (self: super: {
+      indent-bars-source = inputs.indent-bars;
       tree-sitter-grammars =
         super.tree-sitter-grammars
         // {

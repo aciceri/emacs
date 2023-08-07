@@ -1,14 +1,10 @@
 ;; package --- My Emacs config
 ;;; Commentary:
 ;; TODO
-;; - use-package is part of vim now, let's use it instead of setup.el!
-;; - org-roam;; - org goodies
-;; - persp-mode
-;; - understand how cape works
-;; - dirvish
-;; - prettify eshell
-;; - projectile
-
+;; - org-roam
+;; - org goodies
+;; - persp-mode?
+;; - understand how to configure cape
 ;;; Code:
 
 (use-package flymake
@@ -75,6 +71,10 @@
   :config
   (set-face-background 'solaire-default-face "#1c1d26"))
 
+(use-package clipetty
+  :ensure t
+  :hook (after-init . global-clipetty-mode))
+
 (use-package nerd-icons)
 
 (use-package nerd-icons-completion
@@ -95,7 +95,13 @@
     :hook
       (dired-mode . nerd-icons-dired-mode))
 
-(use-package diredfl
+(use-package indent-bars
+  :custom
+  (indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 0.2))
+  (indent-bars-highlight-current-depth '(:blend 0.4))
+  (indent-bars-no-stipple-char (string-to-char "┋")))
+
+(use-package diredf
   :config (diredfl-global-mode))
 
 (use-package treemacs
@@ -341,7 +347,8 @@
 
 (use-package nix-mode
   :hook	((nix-mode . eglot-ensure)
-	 (nix-mode . tree-sitter-hl-mode))
+	 (nix-mode . tree-sitter-hl-mode)
+	 (nix-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode))))
   :config
   (global-nix-prettify-mode))
 
@@ -349,10 +356,13 @@
   :hook ((haskell-mode . eglot-ensure)
 	 (haskell-mode . tree-sitter-hl-mode)))
 
+(use-package purescript-mode
+  :hook (purescript-mode .  turn-on-purescript-indentation))
+
 (use-package terraform-mode
   :hook ((terraform-mode . eglot-ensure)
 	 (terraform-mode . tree-sitter-hl-mode)))
-  
+
 (use-package yaml-mode
   :hook (yaml-mode . tree-sitter-hl-mode))
 

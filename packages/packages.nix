@@ -9,6 +9,7 @@ with epkgs; [
   nerd-icons-dired
   treemacs-nerd-icons
   eat
+  clipetty
   sideline
   sideline-flymake
   delight
@@ -27,6 +28,9 @@ with epkgs; [
   cape
   which-key
   nix-mode
+  unisonlang-mode
+  purescript-mode
+  dhall-mode
   envrc
   inheritenv
   popper
@@ -39,4 +43,8 @@ with epkgs; [
   haskell-mode
   terraform-mode
   diredfl
+  (pkgs.callPackage ./indent-bars.nix {
+    src = pkgs.indent-bars-source;
+    inherit (epkgs) trivialBuild compat;
+  })
 ]
