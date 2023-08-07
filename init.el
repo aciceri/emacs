@@ -15,6 +15,9 @@
   (push '(priority . 1098) (get :error 'flymake-overlay-control))
   (push '(priority . 1099) (get :warning 'flymake-overlay-control))
   (push '(priority . 1100) (get :note 'flymake-overlay-control))
+  (set-face-attribute 'flymake-error  nil :inverse-video t)
+  (set-face-attribute 'flymake-warning  nil :inverse-video t)
+  (set-face-attribute 'flymake-note  nil :inverse-video t)
   :hook prog-mode)
 
 (use-package emacs
