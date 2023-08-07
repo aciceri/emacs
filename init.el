@@ -9,7 +9,7 @@
 
 (use-package flymake
   :config
-  (push `(bzefore-string . ,(propertize "E" 'display '((margin left-margin) "E"))) (get :error 'flymake-overlay-control))
+  (push `(before-string . ,(propertize "E" 'display '((margin left-margin) "E"))) (get :error 'flymake-overlay-control))
   (push `(before-string . ,(propertize "W" 'display '((margin left-margin) "W"))) (get :warning 'flymake-overlay-control))
   (push `(before-string . ,(propertize "N" 'display '((margin left-margin) "N"))) (get :note 'flymake-overlay-control))
   (push '(priority . 1098) (get :error 'flymake-overlay-control))
