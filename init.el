@@ -97,7 +97,7 @@
 
 (use-package indent-bars
   :custom
-  (indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 0.2))
+  (indent-bars-color '(highlight :face-bg t :blend 0.2))
   (indent-bars-highlight-current-depth '(:blend 0.4))
   (indent-bars-no-stipple-char (string-to-char "┋")))
 
