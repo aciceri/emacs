@@ -1,4 +1,5 @@
-;; package --- My Emacs config
+;; package --- My Emacs config -*- lexical-binding:t -*-
+;; Author: Andrea Ciceri <andrea.ciceri@autistici.org>
 ;;; Commentary:
 ;; TODO
 ;; - org-roam
