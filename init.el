@@ -17,6 +17,8 @@
   (set-face-attribute 'flymake-error  nil :inverse-video t)
   (set-face-attribute 'flymake-warning  nil :inverse-video t)
   (set-face-attribute 'flymake-note  nil :inverse-video t)
+  :custom
+  (flymake-mode-line-lighter "Fly")
   :hook prog-mode)
 
 (use-package emacs
@@ -73,7 +75,11 @@
   :config
   (set-face-background 'solaire-default-face "#1c1d26"))
 
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
 (use-package clipetty
+  :delight
   :ensure t
   :hook (after-init . global-clipetty-mode))
 
@@ -338,13 +344,14 @@
   :hook ((prog-mode . hl-line-mode)
 	 (prog-mode . display-line-numbers-mode)))
 
-(use-package which-key :config (which-key-mode))
+(use-package which-key :delight :config (which-key-mode))
 
 (use-package magit
   :hook (magit-mode . magit-delta-mode)
   :bind (("C-c o g" . magit)))
 
 (use-package sideline
+  :delight
   :hook (flymake-mode . sideline-mode)
   :custom
   (sideline-flymake-display-mode 'line)
@@ -359,6 +366,7 @@
   (advice-add 'sideline--align :override #'ccr-sideline--align))
 
 (use-package nix-mode
+  :delight nix-prettify-mode
   :hook	((nix-mode . eglot-ensure)
 	 (nix-mode . tree-sitter-hl-mode)
 	 (nix-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode))))
@@ -382,9 +390,15 @@
 (use-package sh-mode
   :hook (sh-mode . tree-sitter-hl-mode))
 
-(use-package lisp
+(use-package paredit
+  :delight
   :hook ((lisp-mode . enable-paredit-mode)
 	 (emacs-lisp-mode . enable-paredit-mode)))
+
+(use-package eldoc
+  :delight)
+
+(use-package tree-sitter :delight)
 
 (use-package diff-hl
   :init

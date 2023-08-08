@@ -12,6 +12,7 @@ with epkgs; [
   clipetty
   sideline
   sideline-flymake
+  rainbow-delimiters
   delight
   vertico
   marginalia
