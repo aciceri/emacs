@@ -218,10 +218,13 @@
   (windmove-mode +1)
   (defcustom ccr/v-resize-amount 4
     "How smany rows move when calling `ccr/v-resize`"
-    :type 'integer)
+    :type 'integer
+    :group 'ccr)
   (defcustom ccr/h-resize-amount 4
     "How many columns move when calling `ccr/h-resize`"
-    :type 'integer) ;; (defcustom ccr/resize-rows 4)
+    :type 'integer
+    :group 'ccr
+    )
   (defun ccr/v-resize (key)
     "Interactively vertically resize the window"
     (interactive "cHit >/< to enlarge/shrink")
