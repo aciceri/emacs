@@ -9,12 +9,10 @@
 
 (use-package flymake
   :config
-  (push `(before-string . ,(propertize "E" 'display '((margin left-margin) "E"))) (get :error 'flymake-overlay-control))
-  (push `(before-string . ,(propertize "W" 'display '((margin left-margin) "W"))) (get :warning 'flymake-overlay-control))
-  (push `(before-string . ,(propertize "N" 'display '((margin left-margin) "N"))) (get :note 'flymake-overlay-control))
-  (push '(priority . 1098) (get :error 'flymake-overlay-control))
-  (push '(priority . 1099) (get :warning 'flymake-overlay-control))
-  (push '(priority . 1100) (get :note 'flymake-overlay-control))
+  ;; TODO write "E", "W" or "N" in margins overriding the margin created by diff-hl
+  ;; (push `(before-string . ,(propertize " " 'display '((margin left-margin) "E"))) (get :error 'flymake-overlay-control))
+  ;; (push `(before-string . ,(propertize " " 'display '((margin left-margin) "W"))) (get :warning 'flymake-overlay-control))
+  ;; (push `(before-string . ,(propertize " " 'display '((margin left-margin) "N"))) (get :note 'flymake-overlay-control))
   (set-face-attribute 'flymake-error  nil :inverse-video t)
   (set-face-attribute 'flymake-warning  nil :inverse-video t)
   (set-face-attribute 'flymake-note  nil :inverse-video t)
