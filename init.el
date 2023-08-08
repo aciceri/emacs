@@ -345,7 +345,15 @@
   :hook (flymake-mode . sideline-mode)
   :custom
   (sideline-flymake-display-mode 'line)
-  (sideline-backends-right '(sideline-flymake)))
+  (sideline-backends-right '(sideline-flymake))
+  :config
+  ;; FIXME https://github.com/emacs-sideline/sideline/issues/13
+  (require 'sideline)
+  (defun ccr-sideline--align (&rest lengths)
+    "Align sideline string by LENGTHS from the right of the window."
+    (list (* (window-font-width)
+	    (+ (apply #'+ lengths) (if (display-graphic-p) 1 3)))))
+  (advice-add 'sideline--align :override #'ccr-sideline--align))
 
 (use-package nix-mode
   :hook	((nix-mode . eglot-ensure)
