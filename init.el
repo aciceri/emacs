@@ -426,5 +426,10 @@
            ("C-c t c" . popper-cycle)
            ("C-c t p" . popper-toggle-type)))
 
+
+
 (provide 'init)
 ;;; init.el ends here
+;; Local Variables:
+;; byte-compile-warnings: (not free-vars noruntime unresolved)
+;; End:
