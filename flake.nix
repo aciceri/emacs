@@ -4,14 +4,22 @@
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
-    nixpkgs.follows = "emacs-overlay/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     indent-bars = {
       # TODO remove when it lands on (M)ELPA
       url = "github:jdtsmith/indent-bars";
       flake = false;
     };
+    nix-ts-mode = {
+      url = "github:aciceri/nix-ts-mode/improved";
+      flake = false;
+    };
+    combobulate = {
+      url = "github:mickeynp/combobulate";
+      # url = "github:aciceri/combobulate/nix";
+      flake = false;
+    };
   };
-
   outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux"];

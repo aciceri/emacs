@@ -22,13 +22,17 @@ with epkgs; [
   embark-consult
   magit
   magit-delta
+  magit-todos
   diff-hl
   corfu
   corfu-terminal
   kind-icon
   cape
   which-key
-  nix-mode
+  # nix-mode
+  (nix-ts-mode.overrideAttrs (_: {
+    src = pkgs.nix-ts-mode-source;
+  }))
   unisonlang-mode
   purescript-mode
   dhall-mode
@@ -36,8 +40,6 @@ with epkgs; [
   inheritenv
   popper
   paredit
-  tree-sitter
-  tree-sitter-langs
   yaml-mode
   hl-todo
   markdown-mode
@@ -48,4 +50,12 @@ with epkgs; [
     src = pkgs.indent-bars-source;
     inherit (epkgs) trivialBuild compat;
   })
+  (pkgs.callPackage ./combobulate.nix {
+    src = pkgs.combobulate-source;
+    inherit (epkgs) trivialBuild;
+  })
+  org-roam
+  consult-org-roam
+
+  ement
 ]

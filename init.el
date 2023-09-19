@@ -105,11 +105,14 @@
 
 (use-package indent-bars
   :custom
+  (indent-bars-treesit-support t)
+  (indent-bars-spacing-override 2)
+  ;; (indent-bars-treesit-wrap '())
   (indent-bars-color '(highlight :face-bg t :blend 0.2))
   (indent-bars-highlight-current-depth '(:blend 0.4))
   (indent-bars-no-stipple-char (string-to-char "┋")))
 
-(use-package diredf
+(use-package diredfl
   :config (diredfl-global-mode))
 
 (use-package treemacs
@@ -344,10 +347,16 @@
   :hook ((prog-mode . hl-line-mode)
 	 (prog-mode . display-line-numbers-mode)))
 
-(use-package which-key :delight :config (which-key-mode))
+(use-package which-key :delight :config
+  (which-key-mode)
+  (which-key-setup-side-window-right))
 
 (use-package magit
-  :hook (magit-mode . magit-delta-mode)
+  :hook ((magit-mode . magit-delta-mode))
+  :custom
+  (magit-todos-keyword-suffix "([^)]+):")
+  :config
+  (magit-todos-mode +1)
   :bind (("C-c o g" . magit)))
 
 (use-package sideline
@@ -365,13 +374,24 @@
 	    (+ (apply #'+ lengths) (if (display-graphic-p) 1 3)))))
   (advice-add 'sideline--align :override #'ccr-sideline--align))
 
-(use-package nix-mode
-  :delight nix-prettify-mode
-  :hook	((nix-mode . eglot-ensure)
-	 (nix-mode . tree-sitter-hl-mode)
-	 (nix-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode))))
-  :config
-  (global-nix-prettify-mode))
+;; FIXME there is something deeply wrong about how nix is configured here
+;; (use-package nix-mode
+;;   :delight nix-prettify-mode
+;;   :config
+;;   (global-nix-prettify-mode))
+
+(use-package nix-ts-mode
+  :hook (
+	 (nix-ts-mode . (lambda ()
+			  (require 'eglot)
+			  (add-to-list 'eglot-server-programs
+				       '(nix-ts-mode . ("nil")))
+			  (eglot-ensure)))
+	 (nix-ts-mode . electric-pair-mode)
+	 (nix-ts-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode)))
+	 )
+  :mode "\\.nix\\'"
+  )
 
 (use-package haskell-mode
   :hook ((haskell-mode . eglot-ensure)
@@ -381,6 +401,10 @@
   :hook (purescript-mode .  turn-on-purescript-indentation))
 
 (use-package terraform-mode
+  :after eglot
+  :config
+  (add-to-list 'eglot-server-programs
+	       '(terraform-mode . ("terraform-lsp")))
   :hook ((terraform-mode . eglot-ensure)
 	 (terraform-mode . tree-sitter-hl-mode)))
 
@@ -390,6 +414,20 @@
 (use-package sh-mode
   :hook (sh-mode . tree-sitter-hl-mode))
 
+;; FIXME
+;; (use-package mmm-mode
+;;   :config
+;;   (mmm-add-group 'nix-sh
+;; 		 '((sh-command
+;; 		    :submode sh-mode
+;; 		    :face mmm-output-submode-face
+;; 		    :front "[^'a-zA-Z]''[^']"
+;; 		    :back "''[^$\\']"
+;; 		    :include-front t
+;; 		    :front-offset 4
+;; 		    :end-not-begin t)))
+;;   (mmm-add-mode-ext-class 'nix-mode "\\.nix\\'" 'nix-sh))
+
 (use-package paredit
   :delight
   :hook ((lisp-mode . enable-paredit-mode)
@@ -397,8 +435,6 @@
 
 (use-package eldoc
   :delight)
-
-(use-package tree-sitter :delight)
 
 (use-package diff-hl
   :init
@@ -416,20 +452,24 @@
 (use-package eat
   :custom
   (eat-kill-buffer-on-exit t)
-  :bind (("C-c o t" . eat-project)))
+  :bind (("C-c o t" . eat-project))
+  ;; doesn't work well
+  ;; ((eat-mode . compilation-shell-minor-mode))
+  )
 
 (use-package popper
   :custom
    (popper-reference-buffers '("\*Messages\*"
 			      "Output\*$"
 			      "\\*Async Shell Command\\*"
+			      (completion-list-mode . hide)
 			      help-mode
 			      compilation-mode
 			      "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
 			      "^\\*shell.*\\*$" shell-mode ;shell as a popup
 			      "^\\*term.*\\*$" term-mode ;term as a popup
 			      "^\\*eat.*\\*$" eat-mode ;eat as a popup
-			       ))
+			      ))
    (popper-window-height 0.33)
    (popper-echo-lines 1)
    (popper-mode-line nil)
@@ -440,10 +480,33 @@
            ("C-c t c" . popper-cycle)
            ("C-c t p" . popper-toggle-type)))
 
+(use-package org-roam)
 
+(use-package consult-org-roam
+  :delight
+  :after org-roam
+  :init
+  (require 'consult-org-roam)
+  ;; Activate the minor mode
+  (consult-org-roam-mode 1)
+  :custom
+  (consult-org-roam-grep-func #'consult-ripgrep)
+  (consult-org-roam-buffer-narrow-key ?r)
+  (consult-org-roam-buffer-after-buffers t)
+  :config
+  (consult-customize
+   consult-org-roam-forward-links
+   :preview-key (kbd "M-."))
+  :bind
+  ("C-c n f" . consult-org-roam-file-find)
+  ("C-c n b" . consult-org-roam-backlinks)
+  ("C-c n l" . consult-org-roam-forward-links)
+  ("C-c n r" . consult-org-roam-search))
 
 (provide 'init)
 ;;; init.el ends here
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime unresolved)
 ;; End:
+
+

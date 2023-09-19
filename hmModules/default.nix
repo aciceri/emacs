@@ -44,24 +44,17 @@
           };
           home.packages = with pkgs;
             [
-              # TODO add epub-thumbnailer to nixpkgs
-              nil
-              terraform-lsp
-              imagemagick
-              ffmpegthumbnailer
-              mediainfo
-              unzipNLS
               binutils
               (ripgrep.override {withPCRE2 = true;})
               gnutls
               fd
-              imagemagick
-              sqlite
-              maim
-              jq
-              xclip
               hunspell
               python3
+	      imagemagick
+	      ffmpegthumbnailer
+	      mediainfo
+	      unzipNLS
+              pkgs.tree-sitter-grammars.tree-sitter-nix
             ]
             ++ (with hunspellDicts; [
               en_US-large
@@ -76,6 +69,7 @@
                   "$HOME/.config/emacs"
                 $DRY_RUN_CMD ln -s "$HOME/.config/emacs" "$HOME/emacs"
               fi
+              $DRY_RUN_CMD ln -sfn ${self.packages.${pkgs.system}.treesitGrammars} "$HOME/.config/emacs/tree-sitter"
             '';
           };
         };
