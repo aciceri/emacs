@@ -9,6 +9,7 @@ with epkgs; [
   nerd-icons-dired
   treemacs-nerd-icons
   eat
+  eshell-syntax-highlighting
   clipetty
   sideline
   sideline-flymake

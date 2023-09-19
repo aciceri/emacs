@@ -23,7 +23,8 @@
 
 (use-package emacs
   :bind (("<mouse-4>" . scroll-down-line)
-	 ("<mouse-5>" . scroll-up-line))
+	 ("<mouse-5>" . scroll-up-line)
+	 (("C-x F" . recentf-open)))
   :hook (server-after-make-frame . (lambda () (xterm-mouse-mode +1))) ;; FIXME why is this needed?
   :custom
   (use-dialog-box nil)
@@ -41,16 +42,28 @@
   (set-face-background 'vertical-border (face-background 'default))
   (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?┃))
   (menu-bar-mode -1)
+  (scroll-bar-mode -1)
   (xterm-mouse-mode +1)
   (tool-bar-mode -1)
   (global-hl-line-mode -1)
   (global-auto-revert-mode t)
   (show-paren-mode +1)
   (column-number-mode +1)
+  (add-to-list 'default-frame-alist '(font . "Iosevka Comfy-13"))
+  (recentf-mode +1)
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
 )
+
+(use-package tramp
+  :config
+  ;; TODO ugly `ccr' hardcoded
+  (add-to-list 'tramp-remote-path "/home/ccr/.nix-profile/bin" 't)
+  (add-to-list 'tramp-remote-path "/etc/profiles/per-user/ccr/bin" 't)
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin" 't)
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  )
 
 (use-package dracula-theme
   :init
@@ -58,14 +71,14 @@
   (let ((colors '("black" "red" "green" "yellow" "blue" "magenta" "cyan" "white")))
     (dolist (color colors)
       (set-face-attribute (intern (format "ansi-color-%s" color)) nil :foreground color :background color)))
-    (let ((colors '("red" "green" "yellow" "blue" "cyan")))
+  (let ((colors '("red" "green" "yellow" "blue" "cyan")))
     (dolist (color colors)
       (set-face-attribute (intern (format "ansi-color-bright-%s" color)) nil :foreground (format "dark %s" color) :background (format "dark %s" color))))
-    ;; TODO find better colors (bright white and bright black should be different!)
-    (set-face-attribute 'ansi-color-bright-white nil :foreground "grey" :background "grey")
-    (set-face-attribute 'ansi-color-bright-black nil :foreground "grey" :background "grey")
-    (set-face-attribute 'ansi-color-bright-magenta nil :foreground "magenta" :background "magenta")
-    :config
+  ;; TODO find better colors (bright white and bright black should be different!)
+  (set-face-attribute 'ansi-color-bright-white nil :foreground "grey" :background "grey")
+  (set-face-attribute 'ansi-color-bright-black nil :foreground "grey" :background "grey")
+  (set-face-attribute 'ansi-color-bright-magenta nil :foreground "magenta" :background "magenta")
+  :config
   (load-theme 'dracula t))
 
 (use-package solaire-mode
@@ -108,9 +121,10 @@
   (indent-bars-treesit-support t)
   (indent-bars-spacing-override 2)
   ;; (indent-bars-treesit-wrap '())
-  (indent-bars-color '(highlight :face-bg t :blend 0.2))
-  (indent-bars-highlight-current-depth '(:blend 0.4))
-  (indent-bars-no-stipple-char (string-to-char "┋")))
+  (indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 0.4))
+  (indent-bars-no-stipple-char (string-to-char "┋"))
+  (indent-bars-prefer-character 't) ;; so it works also in terminal
+  )
 
 (use-package diredfl
   :config (diredfl-global-mode))
@@ -450,35 +464,57 @@
   (global-hl-todo-mode))
 
 (use-package eat
+  :init
+  ;; FIXME if we not load eat on startup then adding more non bound keys in :config
+  ;; will a cause "nesting exceeds `max-lisp-eval-depth'" on (eat-reload)
+  (eat)
   :custom
   (eat-kill-buffer-on-exit t)
+  :config
+  (add-to-list 'eat-semi-char-non-bound-keys '[?\e 104]) ; M-h
+  (add-to-list 'eat-semi-char-non-bound-keys '[?\e 106]) ; M-j
+  (add-to-list 'eat-semi-char-non-bound-keys '[?\e 107]) ; M-k
+  (add-to-list 'eat-semi-char-non-bound-keys '[?\e 108]) ; M-l
+  (eat-update-semi-char-mode-map)
+  (eat-reload)
   :bind (("C-c o t" . eat-project))
-  ;; doesn't work well
+  ;; FIXME doesn't work well
   ;; ((eat-mode . compilation-shell-minor-mode))
   )
 
+(use-package eshell
+  :hook ((eshell-load . eat-eshell-mode)
+	 (eshell-load . eat-eshell-visual-command-mode))
+  :bind (("C-c o e" . project-eshell)))
+
+(use-package eshell-syntax-highlighting
+  :after eshell-mode
+  :ensure t
+  :config
+  (eshell-syntax-highlighting-global-mode +1))
+
 (use-package popper
   :custom
-   (popper-reference-buffers '("\*Messages\*"
+  (popper-reference-buffers '("\*Messages\*"
 			      "Output\*$"
 			      "\\*Async Shell Command\\*"
 			      (completion-list-mode . hide)
 			      help-mode
 			      compilation-mode
-			      "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
+			      "^\\*emacs-eshell.*\\*$" eshell-mode ;eshell as a popup
 			      "^\\*shell.*\\*$" shell-mode ;shell as a popup
 			      "^\\*term.*\\*$" term-mode ;term as a popup
 			      "^\\*eat.*\\*$" eat-mode ;eat as a popup
 			      ))
-   (popper-window-height 0.33)
-   (popper-echo-lines 1)
-   (popper-mode-line nil)
+  (popper-window-height 0.33)
+  (popper-echo-lines 1)
+  (popper-mode-line nil)
   :init
   (popper-mode 1)
   (popper-echo-mode 1)
   :bind (("C-c t t" . popper-toggle-latest)
-           ("C-c t c" . popper-cycle)
-           ("C-c t p" . popper-toggle-type)))
+         ("C-c t c" . popper-cycle)
+         ("C-c t p" . popper-toggle-type)))
 
 (use-package org-roam)
 
