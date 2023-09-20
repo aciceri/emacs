@@ -67,22 +67,30 @@
 
 (use-package dracula-theme
   :init
-  (require 'ansi-color)
-  (let ((colors '("black" "red" "green" "yellow" "blue" "magenta" "cyan" "white")))
-    (dolist (color colors)
-      (set-face-attribute (intern (format "ansi-color-%s" color)) nil :foreground color :background color)))
-  (let ((colors '("red" "green" "yellow" "blue" "cyan")))
-    (dolist (color colors)
-      (set-face-attribute (intern (format "ansi-color-bright-%s" color)) nil :foreground (format "dark %s" color) :background (format "dark %s" color))))
   ;; TODO find better colors (bright white and bright black should be different!)
   (set-face-attribute 'ansi-color-bright-white nil :foreground "grey" :background "grey")
   (set-face-attribute 'ansi-color-bright-black nil :foreground "grey" :background "grey")
   (set-face-attribute 'ansi-color-bright-magenta nil :foreground "magenta" :background "magenta")
+  
   :config
-  (load-theme 'dracula t))
+  ; TODO abstract the following paradigm in a new use-package keyword :after-frame-one-time
+  (defvar ccr/theme-loaded nil "Indicate if the theme has already been loaded")
+  ;; load the theme only when a frame is created for the first time (not every time)
+  :hook (server-after-make-frame . (lambda ()
+				     (when (not ccr/theme-loaded)
+				       (setq ccr/theme-loaded 't)
+				       (load-theme 'dracula t)
+				       ;; HACK Since dracula doesn't directly expose colors as faces we load
+				       ;; term in order to load them as term faces (which instead it provides)
+				       ;; Then we assign these faces to eat faces
+				       ;; TODO shouldn't this be moved to eat's use-package section?
+				       (require 'term)
+				       (let ((colors '("black" "red" "green" "yellow" "blue" "magenta" "cyan" "white")))
+					 (dolist (color colors)
+					   (set-face-attribute (intern (format "eat-term-color-%s" color)) nil :inherit (intern (format "term-color-%s" color)))))
+				       ))))
 
 (use-package solaire-mode
-  :hook (server-after-make-frame . (lambda () (load-theme 'dracula t))) ;; FIXME when this is closed: https://github.com/hlissner/emacs-solaire-mode/issues/46
   :init
   (solaire-global-mode +1)
   :config
