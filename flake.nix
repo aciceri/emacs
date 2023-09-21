@@ -22,6 +22,10 @@
       url = "github:t4ccer/agenix.el";
       flake = false;
     };
+    extra-package-dracula-theme = {
+      url = "github:dracula/emacs";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:

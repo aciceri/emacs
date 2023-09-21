@@ -52,6 +52,22 @@
         "type": "github"
       }
     },
+    "extra-package-dracula-theme": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695284730,
+        "narHash": "sha256-QkJlJIpWt6tyZJ7ksSYU3oLKpbZCPeHgDaui8tog4iA=",
+        "owner": "dracula",
+        "repo": "emacs",
+        "rev": "427e0677a755107c232aef2ab201013491ec04cd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dracula",
+        "repo": "emacs",
+        "type": "github"
+      }
+    },
     "extra-package-indent-bars": {
       "flake": false,
       "locked": {
@@ -192,6 +208,7 @@
         "emacs-overlay": "emacs-overlay",
         "extra-package-agenix-el": "extra-package-agenix-el",
         "extra-package-combobulate": "extra-package-combobulate",
+        "extra-package-dracula-theme": "extra-package-dracula-theme",
         "extra-package-indent-bars": "extra-package-indent-bars",
         "extra-package-nix-ts-mode": "extra-package-nix-ts-mode",
         "flake-parts": "flake-parts",
