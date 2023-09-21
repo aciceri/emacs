@@ -474,8 +474,8 @@
   (diff-hl-margin-mode 1))
 
 (use-package envrc
-  :after (inheritenv)
-  (envrc-global-mode))
+  :config
+  (envrc-global-mode +1))
 
 (use-package hl-todo
   :init
@@ -505,9 +505,12 @@
 	 (eshell-load . eat-eshell-visual-command-mode))
   :bind (("C-c o e" . project-eshell)))
 
+(use-package esh-autosuggest
+  :hook (eshell-mode . esh-autosuggest-mode))
+
 (use-package eshell-syntax-highlighting
-  :after eshell-mode
-  :ensure t
+  :custom
+  ((eshell-syntax-highlighting-highlight-in-remote-dirs nil))
   :config
   (eshell-syntax-highlighting-global-mode +1))
 
@@ -519,7 +522,7 @@
 			      (completion-list-mode . hide)
 			      help-mode
 			      compilation-mode
-			      "^\\*emacs-eshell.*\\*$" eshell-mode ;eshell as a popup
+			      "^\\*.+-eshell.*\\*$" eshell-mode ;eshell as a popup
 			      "^\\*shell.*\\*$" shell-mode ;shell as a popup
 			      "^\\*term.*\\*$" term-mode ;term as a popup
 			      "^\\*eat.*\\*$" eat-mode ;eat as a popup
