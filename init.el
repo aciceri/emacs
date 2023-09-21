@@ -403,6 +403,15 @@
 ;;   :config
 ;;   (global-nix-prettify-mode))
 
+(use-package agenix
+  :after (inheritenv)
+  :custom
+  ((agenix-age-program "/nix/store/d1gkdszgmmcabz4pb06h8pvzkzml69g5-age-1.1.1/bin/age")
+  (agenix-key-files '("~/.ssh/id_rsa" "~/.ssh/id_ed25519" "~/.ssh/mlabs")))
+  :config
+  (inheritenv-add-advice 'agenix--process-exit-code-and-output)
+)
+
 (use-package nix-ts-mode
   :hook (
 	 (nix-ts-mode . (lambda ()
