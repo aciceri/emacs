@@ -32,6 +32,7 @@ with epkgs; let
       nerd-icons-completion
       nerd-icons-ibuffer
       nerd-icons-dired
+      ligature
       treemacs-nerd-icons
       eat
       eshell-syntax-highlighting
