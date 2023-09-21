@@ -10,6 +10,7 @@ with epkgs; [
   treemacs-nerd-icons
   eat
   eshell-syntax-highlighting
+  esh-autosuggest
   clipetty
   sideline
   sideline-flymake
