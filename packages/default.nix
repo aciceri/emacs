@@ -14,13 +14,14 @@
   }: let
     inherit (inputs.emacs-overlay.overlays.default pkgs pkgs) emacsPackagesFor;
   in {
-    # Some tree-sitter grammars in nixpksg are built with a too new ABI
-    # https://github.com/NixOS/nixpkgs/issues/209114
     _module.args.pkgs = inputs.nixpkgs.legacyPackages.${system}.extend (self: super: {
-      indent-bars-source = inputs.indent-bars;
-      nix-ts-mode-source = inputs.nix-ts-mode;
-      combobulate-source = inputs.combobulate;
-      agenix-el-source = inputs.agenix-el;
+      extra-package-inputs = lib.mapAttrs' (inputName: input: {
+        name = builtins.head (builtins.match "extra-package-(.*)" inputName);
+        value = input;
+      }) (lib.filterAttrs (inputName: _: ! builtins.isNull (builtins.match "extra-package-.*" inputName)) inputs);
+
+      # Some tree-sitter grammars in nixpksg are built with a too new ABI
+      # https://github.com/NixOS/nixpkgs/issues/209114
       # tree-sitter-grammars =
       #   super.tree-sitter-grammars
       #   // {
@@ -44,19 +45,9 @@
             cp $f $out/"libtree-sitter-$(basename $f)"
           done
         '';
-      ccrEmacsWithoutPackages =
-        (inputs'.emacs-overlay.packages.emacs-unstable.override {
-          withPgtk = true;
-          # withNS = false;
-          # withX = false;
-          # withGTK2 = false;
-          # withGTK3 = false;
-          # withWebP = false;
-        })
-        .overrideAttrs (old: {
-          name = "ccr-emacs";
-          version = "29";
-        });
+      ccrEmacsWithoutPackages = inputs'.emacs-overlay.packages.emacs-unstable.override {
+        withPgtk = true;
+      };
       ccrEmacs = let
         emacs =
           (emacsPackagesFor self'.packages.ccrEmacsWithoutPackages).emacsWithPackages

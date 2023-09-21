@@ -5,22 +5,25 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    indent-bars = {
-      # TODO remove when it lands on (M)ELPA
+    extra-package-indent-bars = {
       url = "github:jdtsmith/indent-bars";
       flake = false;
     };
-    nix-ts-mode = {
+    extra-package-nix-ts-mode = {
       url = "github:aciceri/nix-ts-mode/improved";
       flake = false;
     };
-    combobulate = {
+    extra-package-combobulate = {
       url = "github:mickeynp/combobulate";
       # url = "github:aciceri/combobulate/nix";
       flake = false;
     };
-    agenix-el.url = "github:t4ccer/agenix.el";
+    extra-package-agenix-el = {
+      url = "github:t4ccer/agenix.el";
+      flake = false;
+    };
   };
+
   outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux"];
@@ -31,6 +34,7 @@
         ./diff-closures
       ];
     };
+
   nixConfig = {
     extra-substituters = [
       "https://nix-community.cachix.org"
