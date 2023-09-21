@@ -20,6 +20,7 @@
       indent-bars-source = inputs.indent-bars;
       nix-ts-mode-source = inputs.nix-ts-mode;
       combobulate-source = inputs.combobulate;
+      agenix-el-source = inputs.agenix-el;
       # tree-sitter-grammars =
       #   super.tree-sitter-grammars
       #   // {

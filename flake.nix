@@ -19,6 +19,7 @@
       # url = "github:aciceri/combobulate/nix";
       flake = false;
     };
+    agenix-el.url = "github:t4ccer/agenix.el";
   };
   outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {

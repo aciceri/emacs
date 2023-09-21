@@ -50,10 +50,10 @@
               fd
               hunspell
               python3
-	      imagemagick
-	      ffmpegthumbnailer
-	      mediainfo
-	      unzipNLS
+              imagemagick
+              ffmpegthumbnailer
+              mediainfo
+              unzipNLS
               pkgs.tree-sitter-grammars.tree-sitter-nix
             ]
             ++ (with hunspellDicts; [

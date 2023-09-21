@@ -57,6 +57,8 @@ with epkgs; [
   })
   org-roam
   consult-org-roam
-
-  ement
+  (pkgs.callPackage ./agenix-el.nix {
+    src = pkgs.agenix-el-source;
+    inherit (epkgs) trivialBuild;
+  })
 ]
