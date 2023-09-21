@@ -348,9 +348,10 @@
 (use-package corfu
   :config
   (corfu-terminal-mode)
+  (corfu-popupinfo-mode)
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
   :custom
-  (completion-cycle-threshold 3)
+  (completion-cycle-threshold nil)
   (tab-always-indent 'complete)
   (kind-icon-default-face 'corfu-default)
   :bind (:map corfu-map
