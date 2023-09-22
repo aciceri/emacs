@@ -23,11 +23,11 @@
     "extra-package-agenix-el": {
       "flake": false,
       "locked": {
-        "lastModified": 1687197914,
-        "narHash": "sha256-GsgBDopvhE0v7SNNJv+PYVJDgs7SMbDIrlexdszlQuI=",
+        "lastModified": 1695352156,
+        "narHash": "sha256-3170HgBX27W1XiKP8fP5NrqNBEBadFj3TLHPyLpmmyM=",
         "owner": "t4ccer",
         "repo": "agenix.el",
-        "rev": "775eeedbd2b5b6a023d307cb08db5f8ec74eab00",
+        "rev": "ca6cc147c6d7593bc8456cdac47b7bc31c58b736",
         "type": "github"
       },
       "original": {
