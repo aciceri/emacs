@@ -69,33 +69,35 @@
 (use-package dracula-theme
   :init
   ;; TODO find better colors (bright white and bright black should be different!)
+  ;; this is used by auto suggestions while typing in eat
   (set-face-attribute 'ansi-color-bright-white nil :foreground "grey" :background "grey")
   (set-face-attribute 'ansi-color-bright-black nil :foreground "grey" :background "grey")
-  (set-face-attribute 'ansi-color-bright-magenta nil :foreground "magenta" :background "magenta")
-  
+  ;; (set-face-attribute 'ansi-color-bright-magenta nil :foreground "magenta" :background "magenta")
+  (set-face-background 'match (color-lighten-name (face-background 'menu) 30))
   :config
-  ; TODO abstract the following paradigm in a new use-package keyword :after-frame-one-time
+  ;; TODO abstract the following paradigm in a new use-package keyword :after-frame-one-time
   (defvar ccr/theme-loaded nil "Indicate if the theme has already been loaded")
   ;; load the theme only when a frame is created for the first time (not every time)
   :hook (server-after-make-frame . (lambda ()
 				     (when (not ccr/theme-loaded)
 				       (setq ccr/theme-loaded 't)
 				       (load-theme 'dracula t)
+				       (custom-theme-set-faces 'dracula '(default ((t (:background "black")))))
+				       (load-theme 'dracula t)
 				       ;; HACK Since dracula doesn't directly expose colors as faces we load
-				       ;; term in order to load them as term faces (which instead it provides)
+				       ;; term in order to load them as term faces (which instead itq provides)
 				       ;; Then we assign these faces to eat faces
 				       ;; TODO shouldn't this be moved to eat's use-package section?
-				       (require 'term)
-				       (let ((colors '("black" "red" "green" "yellow" "blue" "magenta" "cyan" "white")))
-					 (dolist (color colors)
-					   (set-face-attribute (intern (format "eat-term-color-%s" color)) nil :inherit (intern (format "term-color-%s" color)))))
+				       ;; (require 'term)
+				       ;; (let ((colors '("black" "red" "green" "yellow" "blue" "magenta" "cyan" "white")))
+				       ;; 	 (dolist (color colors)
+				       ;; 	   (set-face-attribute (intern (format "eat-term-color-%s" color)) nil :inherit (intern (format "term-color-%s" color)))))
 				       ))))
 
 (use-package solaire-mode
   :init
   (solaire-global-mode +1)
-  :config
-  (set-face-background 'solaire-default-face "#1c1d26"))
+  :custom ((solaire-mode-themes-to-face-swap '(dracula))))
 
 (use-package ligature
   :config
@@ -433,6 +435,7 @@
 )
 
 (use-package nix-ts-mode
+  :custom ((nix-ts-mode--embed-bash nil))
   :hook (
 	 (nix-ts-mode . (lambda ()
 			  (require 'eglot)
@@ -444,6 +447,14 @@
 	 )
   :mode "\\.nix\\'"
   )
+
+(use-package python-ts-mode
+  :hook ((python-ts-mode . (lambda ()
+			  (require 'eglot)
+			  (add-to-list 'eglot-server-programs
+				       '(python-ts-mode . ("jedi-language-server")))
+			  (eglot-ensure))))
+  :mode "\\.py\\'")
 
 (use-package haskell-mode
   :hook ((haskell-mode . eglot-ensure)

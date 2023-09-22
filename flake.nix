@@ -23,7 +23,7 @@
       flake = false;
     };
     extra-package-dracula-theme = {
-      url = "github:dracula/emacs";
+      url = "github:aciceri/dracula-emacs";
       flake  = false;
     };
   };

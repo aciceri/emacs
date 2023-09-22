@@ -55,16 +55,16 @@
     "extra-package-dracula-theme": {
       "flake": false,
       "locked": {
-        "lastModified": 1695368802,
-        "narHash": "sha256-i/xIb8jYONVNxADFcU5HVKhejkL+Ou6NlF92QTMFyiY=",
-        "owner": "dracula",
-        "repo": "emacs",
-        "rev": "dabe74904036717b06546c382df6e77a28921cff",
+        "lastModified": 1695902551,
+        "narHash": "sha256-uP3icMS0MP4j1Y7ivpMQZv0jLRh7CaRpG8NCn3vLnbE=",
+        "owner": "aciceri",
+        "repo": "dracula-emacs",
+        "rev": "25c2623e65817b5902b7ef74d1e8bafafa9d5a48",
         "type": "github"
       },
       "original": {
-        "owner": "dracula",
-        "repo": "emacs",
+        "owner": "aciceri",
+        "repo": "dracula-emacs",
         "type": "github"
       }
     },
