@@ -532,6 +532,9 @@
   )
 
 (use-package eshell
+  :config
+  (defun ccr/start-eshell ()
+    (eshell 'N))
   :hook ((eshell-load . eat-eshell-mode)
 	 (eshell-load . eat-eshell-visual-command-mode))
   :bind (("C-c o e" . project-eshell)))
