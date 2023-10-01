@@ -595,7 +595,11 @@
   ("C-c n r" . consult-org-roam-search))
 
 (use-package chatgpt
-  ;; :custom ((chatgpt-code-query-map . (cons "spiega" "Spiega il seguente")))
+  :config
+  (dolist (e '(("spiega" . "Spiega il seguente")
+	       ("documenta" . "Documenta il seguente")
+	       ))
+    (push e chatgpt-code-query-map))
   :bind
   ("C-c i" . chatgpt-query))
 
