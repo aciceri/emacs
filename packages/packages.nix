@@ -4,6 +4,7 @@ with epkgs; let
 
   depsPerPackage = {
     indent-bars = [compat];
+    "chatgpt" = [polymode];
   };
 
   # *Attrset* containig extra emacs packages from flake inputs

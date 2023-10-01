@@ -594,6 +594,11 @@
   ("C-c n l" . consult-org-roam-forward-links)
   ("C-c n r" . consult-org-roam-search))
 
+(use-package chatgpt
+  ;; :custom ((chatgpt-code-query-map . (cons "spiega" "Spiega il seguente")))
+  :bind
+  ("C-c i" . chatgpt-query))
+
 (provide 'init)
 ;;; init.el ends here
 ;; Local Variables:

@@ -26,6 +26,10 @@
       url = "github:aciceri/dracula-emacs";
       flake  = false;
     };
+    extra-package-chatgpt = {
+      url = "github:joshcho/ChatGPT.el";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:

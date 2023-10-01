@@ -36,6 +36,22 @@
         "type": "github"
       }
     },
+    "extra-package-chatgpt": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1694351403,
+        "narHash": "sha256-ZQyPKe9olIaxYGoHJwEwsmfnYnVWCPt6o8ImY6rE3gY=",
+        "owner": "joshcho",
+        "repo": "ChatGPT.el",
+        "rev": "b31337e541eb7df169ae17f7bb26b459e6d6a5ae",
+        "type": "github"
+      },
+      "original": {
+        "owner": "joshcho",
+        "repo": "ChatGPT.el",
+        "type": "github"
+      }
+    },
     "extra-package-combobulate": {
       "flake": false,
       "locked": {
@@ -207,6 +223,7 @@
       "inputs": {
         "emacs-overlay": "emacs-overlay",
         "extra-package-agenix-el": "extra-package-agenix-el",
+        "extra-package-chatgpt": "extra-package-chatgpt",
         "extra-package-combobulate": "extra-package-combobulate",
         "extra-package-dracula-theme": "extra-package-dracula-theme",
         "extra-package-indent-bars": "extra-package-indent-bars",
