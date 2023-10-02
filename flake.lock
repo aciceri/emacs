@@ -68,6 +68,22 @@
         "type": "github"
       }
     },
+    "extra-package-copilot": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1694588237,
+        "narHash": "sha256-7LKB2JoYAVu5i23ZKBVZPe6azCItHK/tlBNPgFXxztc=",
+        "owner": "zerolfx",
+        "repo": "copilot.el",
+        "rev": "421703f5dd5218ec2a3aa23ddf09d5f13e5014c2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zerolfx",
+        "repo": "copilot.el",
+        "type": "github"
+      }
+    },
     "extra-package-dracula-theme": {
       "flake": false,
       "locked": {
@@ -225,6 +241,7 @@
         "extra-package-agenix-el": "extra-package-agenix-el",
         "extra-package-chatgpt": "extra-package-chatgpt",
         "extra-package-combobulate": "extra-package-combobulate",
+        "extra-package-copilot": "extra-package-copilot",
         "extra-package-dracula-theme": "extra-package-dracula-theme",
         "extra-package-indent-bars": "extra-package-indent-bars",
         "extra-package-nix-ts-mode": "extra-package-nix-ts-mode",

@@ -54,7 +54,7 @@
               ffmpegthumbnailer
               mediainfo
               unzipNLS
-              pkgs.tree-sitter-grammars.tree-sitter-nix
+              nodejs
             ]
             ++ (with hunspellDicts; [
               en_US-large

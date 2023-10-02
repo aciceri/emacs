@@ -24,10 +24,14 @@
     };
     extra-package-dracula-theme = {
       url = "github:aciceri/dracula-emacs";
-      flake  = false;
+      flake = false;
     };
     extra-package-chatgpt = {
       url = "github:joshcho/ChatGPT.el";
+      flake = false;
+    };
+    extra-package-copilot = {
+      url = "github:zerolfx/copilot.el";
       flake = false;
     };
   };

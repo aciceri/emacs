@@ -15,12 +15,21 @@
   ;; (push `(before-string . ,(propertize " " 'display '((margin left-margin) "E"))) (get :error 'flymake-overlay-control))
   ;; (push `(before-string . ,(propertize " " 'display '((margin left-margin) "W"))) (get :warning 'flymake-overlay-control))
   ;; (push `(before-string . ,(propertize " " 'display '((margin left-margin) "N"))) (get :note 'flymake-overlay-control))
-  (set-face-attribute 'flymake-error  nil :inverse-video t)
-  (set-face-attribute 'flymake-warning  nil :inverse-video t)
-  (set-face-attribute 'flymake-note  nil :inverse-video t)
+  ;; TODO set following only when on terminal (where wavy underlines are not shown)
+  ;; (set-face-attribute 'flymake-error  nil :inverse-video t)
+  ;; (set-face-attribute 'flymake-warning  nil :inverse-video t)
+  ;; (set-face-attribute 'flymake-note  nil :inverse-video t)
   :custom
   (flymake-mode-line-lighter "Fly")
   :hook prog-mode)
+
+(use-package eglot
+  :custom
+  ;; Tricks that should make Emacs faster
+  (eglot-events-buffer-size 0) ; disable events logging, it should be enabled only when debuggigng LSP servers
+  (eglot-sync-connect-nil 0) ; disable UI freeze when opening big files
+  (eglot-connect-timeout nil) ; never timeout
+  )
 
 (use-package emacs
   :bind (("<mouse-4>" . scroll-down-line)
@@ -52,10 +61,11 @@
   (column-number-mode +1)
   (add-to-list 'default-frame-alist '(font . "Iosevka Comfy-13"))
   (recentf-mode +1)
+  (fset #'jsonrpc--log-event #'ignore) ; this should be enabled only when needed, otherwise makes Emacs slower
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
-)
+  )
 
 (use-package tramp
   :config
@@ -532,6 +542,7 @@
   )
 
 (use-package eshell
+  :custom ((eshell-prefer-lisp-functions t))
   :config
   (defun ccr/start-eshell ()
     (eshell 'N))
@@ -571,6 +582,25 @@
          ("C-c t c" . popper-cycle)
          ("C-c t p" . popper-toggle-type)))
 
+(use-package org
+  :hook (org-mode . variable-pitch-mode)
+  :custom ((org-hide-emphasis-markers t))
+  :config
+  ;; FIXME the following doesn't work when using the daemon, it should be executed only
+  ;; one time after the first frame is created 
+  (set-face-font 'variable-pitch "Dejavu Serif 14")
+  (set-face-font 'fixed-pitch "Iosevka 14")
+
+  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-meta-line nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-property-value nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-tag nil :inherit 'fixed-pitch :weight 'bold :height 0.8)
+  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch))
+
 (use-package org-roam)
 
 (use-package consult-org-roam
@@ -597,16 +627,20 @@
 (use-package chatgpt
   :config
   (dolist (e '(("spiega" . "Spiega il seguente")
-	       ("documenta" . "Documenta il seguente")
+	       ("documenta" . "Documenta il seguente usando la sintassi appropriata in modo che possa essere inserito nel codice")
 	       ))
     (push e chatgpt-code-query-map))
   :bind
   ("C-c i" . chatgpt-query))
+
+(use-package copilot
+  :custom
+  (copilot-max-char -1)
+  :hook (prog-mode org-mode)
+  :bind (("C-<tab>" . copilot-accept-completion)))
 
 (provide 'init)
 ;;; init.el ends here
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime unresolved)
 ;; End:
-
-

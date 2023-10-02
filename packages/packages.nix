@@ -4,20 +4,30 @@ with epkgs; let
 
   depsPerPackage = {
     indent-bars = [compat];
-    "chatgpt" = [polymode];
+    chatgpt = [polymode];
+    copilot = [editorconfig dash s];
+  };
+
+  overrideAttrsPerPackage = {
+    copilot = old: {
+      postInstall = ''
+        cp -r "$src/dist" "$LISPDIR"
+      '';
+    };
   };
 
   # *Attrset* containig extra emacs packages from flake inputs
   extraPackages = lib.mapAttrs (inputName: input: let
     deps = depsPerPackage.${inputName} or [];
-  in
-    trivialBuild {
+    build = trivialBuild {
       pname = inputName;
       src = input.outPath;
       version = input.shortRev;
       propagatedUserEnvPkgs = deps;
       buildInputs = deps;
-    })
+    };
+  in
+    build.overrideAttrs (overrideAttrsPerPackage.${inputName} or (_: _)))
   pkgs.extra-package-inputs;
 
   # *List* containing emacs packages from (M)ELPA
