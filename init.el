@@ -542,13 +542,62 @@
   )
 
 (use-package eshell
-  :custom ((eshell-prefer-lisp-functions t))
+  :init (require 'eshell) ;; this slows down Emacs startup but it's needed when starting eshell with
+  			  ;; emacsclient --eval before opening another eshell buffer directly from inside Emacs
+  (eat-eshell-mode)
+  (eat-eshell-visual-command-mode)
+  :custom ((eshell-prefer-lisp-functions t)
+	   (eshell-history-size 10000))
   :config
-  (defun ccr/start-eshell ()
-    (eshell 'N))
-  :hook ((eshell-load . eat-eshell-mode)
-	 (eshell-load . eat-eshell-visual-command-mode))
-  :bind (("C-c o e" . project-eshell)))
+  (defun ccr/start-eshell () ;; Used from outside Emacs by emacsclient --eval
+    (eshell 'N)
+    (add-hook 'kill-buffer-hook 'delete-frame nil 't)) ;; destroy frame on exit
+
+  (defun ccr/eshell-history ()
+    "Interactive search eshell history."
+    (interactive)
+    (require 'em-hist)
+    (save-excursion
+      (eshell-bol)
+      (let* ((start-pos (point))
+    	     (end-pos (line-end-position))
+    	     (input (buffer-substring-no-properties start-pos end-pos)))
+	(message input)
+        (let* ((history (delete-dups (when (> (ring-size eshell-history-ring) 0)
+    				       (ring-elements eshell-history-ring))))
+	       (history-highlighted (mapcar #'(lambda (cmd)
+					       (with-temp-buffer
+							      (insert cmd)
+							      (forward-line 0)
+							      (eshell-syntax-highlighting--parse-and-highlight 'command (point-max))
+							      (add-face-text-property (point-min) (point-max) '(:background nil))
+							      (buffer-string)))
+						history))
+	       (command (completing-read
+			 "Command: "
+			 history-highlighted
+			 nil
+			 nil
+			 input
+			 )))
+    	  (kill-region start-pos end-pos)
+	  (insert command)
+    	  )))
+    (end-of-line))
+
+  (defun ccr/wrap-eshell-write-history (orig-fun &optional filename &rest _)
+    (apply orig-fun `(,filename 't)))
+
+  ;; Wrapping this in order to merge histories from different shells
+  (advice-add 'eshell-write-history
+	      :around #'ccr/wrap-eshell-write-history)
+  
+  (add-to-list 'eshell-modules-list 'eshell-tramp) ;; to use sudo in eshell
+  ;; :hook ((eshell-load . eat-eshell-mode)
+  ;; 	 (eshell-load . eat-eshell-visual-command-mode))
+  :bind (("C-c o e" . project-eshell)
+	 :map eshell-mode-map
+	 ("C-r" . ccr/eshell-history))) ;; i.e. just C-r in semi-char-mode
 
 (use-package esh-autosuggest
   :hook (eshell-mode . esh-autosuggest-mode))
@@ -583,8 +632,13 @@
          ("C-c t p" . popper-toggle-type)))
 
 (use-package org
-  :hook (org-mode . variable-pitch-mode)
-  :custom ((org-hide-emphasis-markers t))
+  :hook ((org-mode . variable-pitch-mode)
+	 (org-mode . visual-line-mode)
+	 (org-mode . visual-fill-column-mode))
+  :custom ((org-hide-emphasis-markers t)
+	   (visual-fill-column-center-text t)
+	   (visual-fill-column-width 100)
+	   (fill-column 100))
   :config
   ;; FIXME the following doesn't work when using the daemon, it should be executed only
   ;; one time after the first frame is created 
@@ -599,7 +653,8 @@
   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-tag nil :inherit 'fixed-pitch :weight 'bold :height 0.8)
-  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
+  )
 
 (use-package org-roam)
 

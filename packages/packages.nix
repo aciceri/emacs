@@ -68,7 +68,7 @@ with epkgs; let
       kind-icon
       cape
       which-key
-      # nix-mode
+      nix-mode
       unisonlang-mode
       purescript-mode
       dhall-mode
@@ -83,7 +83,10 @@ with epkgs; let
       terraform-mode
       diredfl
       org-roam
+      visual-fill-column
       consult-org-roam
+      pass
+      password-store-otp
     ];
 in
   mainPackages ++ (builtins.attrValues extraPackages)
