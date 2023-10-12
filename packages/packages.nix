@@ -87,6 +87,10 @@ with epkgs; let
       consult-org-roam
       pass
       password-store-otp
+
+      vertico-posframe
+      eldoc-box
     ];
 in
   mainPackages ++ (builtins.attrValues extraPackages)
+
