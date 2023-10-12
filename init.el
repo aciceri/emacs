@@ -591,7 +591,16 @@
   ;; Wrapping this in order to merge histories from different shells
   (advice-add 'eshell-write-history
 	      :around #'ccr/wrap-eshell-write-history)
-  
+
+  (defun ccr/consult-pass (&optional otp)
+    "Interactive search password"
+    (interactive)
+    (let* ((entries (password-store-list))
+	  (fun (if otp 'password-store-otp-token-copy 'password-store-copy))
+	  (prompt (if otp "Password: " "OTP: "))
+	  (selected (completing-read prompt entries)))
+      (apply fun `(,selected))))
+    
   (add-to-list 'eshell-modules-list 'eshell-tramp) ;; to use sudo in eshell
   ;; :hook ((eshell-load . eat-eshell-mode)
   ;; 	 (eshell-load . eat-eshell-visual-command-mode))
