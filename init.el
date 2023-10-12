@@ -48,6 +48,7 @@
   (backup-directory-alist `(("." . ,temporary-file-directory)))
   (auto-save-files-name-transforms `((".*" ,temporary-file-directory t)))
   (backup-by-copying t)
+  (focus-follows-mouse 't)
   :config
   (set-face-background 'vertical-border (face-background 'default))
   (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?┃))
@@ -83,7 +84,7 @@
   (set-face-attribute 'ansi-color-bright-white nil :foreground "grey" :background "grey")
   (set-face-attribute 'ansi-color-bright-black nil :foreground "grey" :background "grey")
   ;; (set-face-attribute 'ansi-color-bright-magenta nil :foreground "magenta" :background "magenta")
-  (set-face-background 'match (color-lighten-name (face-background 'menu) 30))
+  ;; (set-face-background 'match (color-lighten-name (face-background 'menu) 30))
   :config
   ;; TODO abstract the following paradigm in a new use-package keyword :after-frame-one-time
   (defvar ccr/theme-loaded nil "Indicate if the theme has already been loaded")
@@ -334,14 +335,31 @@
 (use-package vertico
   :custom
   (vertico-mouse-mode t)
-  (vertico-reverse-mode t)
-  (vertico-count 12)
+  ;; (vertico-reverse-mode t) ;; FIXME breaks vertico-posframe
+  (vertico-count 16)
   (vertico-resize t)
   (vertico-cycle t)
   (vertico-mode t)
   :bind (:map vertico-map
     (("DEL" . vertico-directory-delete-char)
      ("C-DEL" . vertico-directory-delete-word))))
+
+(use-package vertico-posframe
+  :after vertico
+  :config
+  (vertico-posframe-mode +1)
+  :custom
+  (vertico-posframe-min-height 0)
+  (vertico-posframe-min-width 80)
+  (vertico-posframe-parameters '((alpha-background . 80)))
+  ;; I'm globally enabling vertico-posframe-mode in spite of being advised against it by the README
+  ;; It seems to work
+  ;;(vertico-multiform-commands
+  ;; '((t
+  ;;    posframe
+  ;;    (vertico-posframe-poshandler . posframe-poshandler-frame-center)
+  ;;    (vertico-posframe-fallback-mode . vertico-buffer-mode))))
+)
 
 (use-package marginalia
   :init
@@ -438,8 +456,9 @@
 (use-package agenix
   :after (inheritenv)
   :custom
+  ;; FIXME 🤮
   ((agenix-age-program "/nix/store/d1gkdszgmmcabz4pb06h8pvzkzml69g5-age-1.1.1/bin/age")
-  (agenix-key-files '("~/.ssh/id_rsa" "~/.ssh/id_ed25519" "~/.ssh/mlabs")))
+   (agenix-key-files '("~/.ssh/id_rsa" "~/.ssh/id_ed25519" "~/.ssh/mlabs")))
   :config
   (inheritenv-add-advice 'agenix--process-exit-code-and-output)
 )
@@ -450,7 +469,7 @@
 	 (nix-ts-mode . (lambda ()
 			  (require 'eglot)
 			  (add-to-list 'eglot-server-programs
-				       '(nix-ts-mode . ("nil")))
+				       '(nix-ts-mode . ("nixd")))
 			  (eglot-ensure)))
 	 (nix-ts-mode . electric-pair-mode)
 	 (nix-ts-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode)))
@@ -471,7 +490,9 @@
 	 (haskell-mode . tree-sitter-hl-mode)))
 
 (use-package purescript-mode
-  :hook (purescript-mode .  turn-on-purescript-indentation))
+  :custom ((project-vc-extra-root-markers '("spago.dhall")))
+  :hook ((purescript-mode . eglot-ensure)
+	 (purescript-mode . turn-on-purescript-indentation)))
 
 (use-package terraform-mode
   :after eglot
@@ -508,6 +529,14 @@
 
 (use-package eldoc
   :delight)
+
+(use-package eldoc-box
+  :after eglot
+  :custom
+  (eldoc-box-only-multiline nil)
+  (eldoc-box-lighter "ElBox")
+  :hook ((eglot-managed-mode . eldoc-box-hover-mode)
+	 (emacs-lisp-mode . eldoc-box-hover-mode)))
 
 (use-package diff-hl
   :init
