@@ -492,7 +492,8 @@
 (use-package purescript-mode
   :custom ((project-vc-extra-root-markers '("spago.dhall")))
   :hook ((purescript-mode . eglot-ensure)
-	 (purescript-mode . turn-on-purescript-indentation)))
+	 (purescript-mode . turn-on-purescript-indentation)
+	 (purescript-mode . (lambda () (setq project-vc-extra-root-markers '("spago.dhall"))))))
 
 (use-package terraform-mode
   :after eglot
@@ -629,7 +630,7 @@
 	  (prompt (if otp "Password: " "OTP: "))
 	  (selected (completing-read prompt entries)))
       (apply fun `(,selected))))
-    
+
   (add-to-list 'eshell-modules-list 'eshell-tramp) ;; to use sudo in eshell
   ;; :hook ((eshell-load . eat-eshell-mode)
   ;; 	 (eshell-load . eat-eshell-visual-command-mode))
