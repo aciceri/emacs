@@ -70,11 +70,13 @@
 
 (use-package tramp
   :config
-  ;; TODO ugly `ccr' hardcoded
+  ;; TODO ugly `ccr' hardcoded, moreover this makes sense only when connecting to NixOS machines
   (add-to-list 'tramp-remote-path "/home/ccr/.nix-profile/bin" 't)
   (add-to-list 'tramp-remote-path "/etc/profiles/per-user/ccr/bin" 't)
   (add-to-list 'tramp-remote-path "/run/current-system/sw/bin" 't)
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  :custom
+  (tramp-use-ssh-controlmaster-options nil) ;; makes tramp use ~/.ssh/config
   )
 
 (use-package dracula-theme
