@@ -63,6 +63,7 @@ with epkgs; let
       magit
       magit-delta
       magit-todos
+      with-editor
       diff-hl
       corfu
       corfu-terminal
@@ -88,7 +89,6 @@ with epkgs; let
       consult-org-roam
       pass
       password-store-otp
-
       vertico-posframe
       eldoc-box
     ];
