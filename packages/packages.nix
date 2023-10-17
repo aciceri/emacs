@@ -47,6 +47,7 @@ with epkgs; let
       treemacs-nerd-icons
       eat
       eshell-syntax-highlighting
+      fish-completion # fish completion for eshell
       esh-autosuggest
       clipetty
       sideline

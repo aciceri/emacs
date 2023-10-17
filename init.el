@@ -641,6 +641,9 @@
 (use-package esh-autosuggest
   :hook (eshell-mode . esh-autosuggest-mode))
 
+(use-package fish-completion-mode
+  :hook ((eshell-mode . fish-completion-mode)))
+
 (use-package eshell-syntax-highlighting
   :custom
   ((eshell-syntax-highlighting-highlight-in-remote-dirs nil))
