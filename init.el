@@ -596,13 +596,15 @@
         (let* ((history (delete-dups (when (> (ring-size eshell-history-ring) 0)
     				       (ring-elements eshell-history-ring))))
 	       (history-highlighted (mapcar #'(lambda (cmd)
-					       (with-temp-buffer
-							      (insert cmd)
-							      (forward-line 0)
-							      (eshell-syntax-highlighting--parse-and-highlight 'command (point-max))
-							      (add-face-text-property (point-min) (point-max) '(:background nil))
-							      (buffer-string)))
-						history))
+						(with-temp-buffer
+						  (text-mode)
+						  (insert cmd)
+						  (forward-line 0)
+						  ;; FIXME it breaks trying to highlight commands like `cd /ssh:host:~'
+						  ;; (eshell-syntax-highlighting--parse-and-highlight 'command (point-max))
+						  (add-face-text-property (point-min) (point-max) '(:background nil))
+						  (buffer-string)))
+					    history))
 	       (command (completing-read
 			 "Command: "
 			 history-highlighted
