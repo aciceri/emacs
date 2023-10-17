@@ -622,18 +622,8 @@
   (advice-add 'eshell-write-history
 	      :around #'ccr/wrap-eshell-write-history)
 
-  (defun ccr/consult-pass (&optional otp)
-    "Interactive search password"
-    (interactive)
-    (let* ((entries (password-store-list))
-	  (fun (if otp 'password-store-otp-token-copy 'password-store-copy))
-	  (prompt (if otp "Password: " "OTP: "))
-	  (selected (completing-read prompt entries)))
-      (apply fun `(,selected))))
-
   (add-to-list 'eshell-modules-list 'eshell-tramp) ;; to use sudo in eshell
-  ;; :hook ((eshell-load . eat-eshell-mode)
-  ;; 	 (eshell-load . eat-eshell-visual-command-mode))
+  ;; (add-to-list 'eshell-modules-list 'eshell-smart) ;; plan 9 style
   :bind (("C-c o e" . project-eshell)
 	 :map eshell-mode-map
 	 ("C-r" . ccr/eshell-history))) ;; i.e. just C-r in semi-char-mode
@@ -735,6 +725,18 @@
   (copilot-max-char -1)
   :hook (prog-mode org-mode)
   :bind (("C-<tab>" . copilot-accept-completion)))
+
+(use-package pass
+  :config
+  (require 'password-store-otp)
+  
+  :bind (("C-c p p" . password-store-copy)
+	 ("C-c p o" . password-store-otp-token-copy)
+	 ("C-c p e" . password-store-edit)
+	 ("C-c p i" . password-store-insert)))
+
+(use-package with-editor
+  :init (shell-command-with-editor-mode +1))
 
 (provide 'init)
 ;;; init.el ends here
