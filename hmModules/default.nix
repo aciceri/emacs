@@ -54,7 +54,7 @@
               ffmpegthumbnailer
               mediainfo
               unzipNLS
-              nodejs
+              nodejs_20
             ]
             ++ (with hunspellDicts; [
               en_US-large
