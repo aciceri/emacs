@@ -42,6 +42,7 @@
         ./hmModules
         ./formatter
         ./diff-closures
+	./checks
       ];
     };
 
