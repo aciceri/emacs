@@ -1,8 +1,4 @@
-{
-  self,
-  inputs,
-  ...
-}: {
+{self, ...}: {
   flake.hmModules = {
     default = self.hmModules.ccrEmacs;
     ccrEmacs = {
@@ -21,11 +17,9 @@
       };
       config = let
         ccrEmacsConfig = config.ccrEmacs;
+        cfg = config.services.emacs;
       in
         lib.mkIf ccrEmacsConfig.enable {
-          nixpkgs.overlays = [
-            inputs.emacs-overlay.overlays.default
-          ];
           programs.emacs = {
             enable = true;
             package = ccrEmacsConfig.package;
@@ -36,6 +30,7 @@
             defaultEditor = true;
             socketActivation.enable = false;
             startWithUserSession = true;
+            package = ccrEmacsConfig.package;
           };
           systemd.user.sessionVariables = {
             # TODO user `gpgconf --list-dirs agent-ssh-socket`

@@ -6,6 +6,7 @@ with epkgs; let
     indent-bars = [compat];
     chatgpt = [polymode];
     copilot = [editorconfig dash s];
+    notmuch-notify = [alert notmuch];
   };
 
   overrideAttrsPerPackage = {
@@ -38,7 +39,7 @@ with epkgs; let
     [
       meow
       dracula-theme
-      solaire-mode
+      # solaire-mode
       nerd-icons
       nerd-icons-completion
       nerd-icons-ibuffer
@@ -48,6 +49,7 @@ with epkgs; let
       eat
       eshell-syntax-highlighting
       fish-completion # fish completion for eshell
+      eshell-prompt-extras
       esh-autosuggest
       clipetty
       sideline
@@ -91,6 +93,8 @@ with epkgs; let
       password-store-otp
       vertico-posframe
       eldoc-box
+      go-translate
+      notmuch
     ];
 in
   mainPackages ++ (builtins.attrValues extraPackages)

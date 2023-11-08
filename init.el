@@ -80,37 +80,16 @@
   )
 
 (use-package dracula-theme
-  :init
-  ;; TODO find better colors (bright white and bright black should be different!)
-  ;; this is used by auto suggestions while typing in eat
-  (set-face-attribute 'ansi-color-bright-white nil :foreground "grey" :background "grey")
-  (set-face-attribute 'ansi-color-bright-black nil :foreground "grey" :background "grey")
-  ;; (set-face-attribute 'ansi-color-bright-magenta nil :foreground "magenta" :background "magenta")
-  ;; (set-face-background 'match (color-lighten-name (face-background 'menu) 30))
   :config
-  ;; TODO abstract the following paradigm in a new use-package keyword :after-frame-one-time
-  (defvar ccr/theme-loaded nil "Indicate if the theme has already been loaded")
-  ;; load the theme only when a frame is created for the first time (not every time)
-  :hook (server-after-make-frame . (lambda ()
-				     (when (not ccr/theme-loaded)
-				       (setq ccr/theme-loaded 't)
-				       (load-theme 'dracula t)
-				       (custom-theme-set-faces 'dracula '(default ((t (:background "black")))))
-				       (load-theme 'dracula t)
-				       ;; HACK Since dracula doesn't directly expose colors as faces we load
-				       ;; term in order to load them as term faces (which instead itq provides)
-				       ;; Then we assign these faces to eat faces
-				       ;; TODO shouldn't this be moved to eat's use-package section?
-				       ;; (require 'term)
-				       ;; (let ((colors '("black" "red" "green" "yellow" "blue" "magenta" "cyan" "white")))
-				       ;; 	 (dolist (color colors)
-				       ;; 	   (set-face-attribute (intern (format "eat-term-color-%s" color)) nil :inherit (intern (format "term-color-%s" color)))))
-				       ))))
+  (add-hook 'after-make-frame-functions (defun ccr/theme-init (_)
+					  (load-theme 'dracula 't)
+					  (meow--prepare-face)
+					  (remove-hook 'after-make-frame-functions 'ccr/theme-init))))
 
-(use-package solaire-mode
-  :init
-  (solaire-global-mode +1)
-  :custom ((solaire-mode-themes-to-face-swap '(dracula))))
+;; (use-package solaire-mode
+;;   :init
+;;   (solaire-global-mode +1)
+;;   :custom ((solaire-mode-themes-to-face-swap '(dracula))))
 
 (use-package ligature
   :config
@@ -189,6 +168,14 @@
 
 (use-package meow
   :hook (server-after-make-frame . (lambda () (meow--prepare-face)))
+  :config
+  (add-hook 'after-make-frame-functions (defun ccr/meow--prepare-face (_)
+					  (meow--prepare-face)
+					  (remove-hook 'after-make-frame-functions 'ccr/meow--prepare-face)))
+  (add-to-list 'meow-mode-state-list '(eshell-mode . insert))
+  (add-to-list 'meow-mode-state-list '(eat-mode . insert))
+  (add-to-list 'meow-mode-state-list '(notmuch-hello-mode . insert))
+  (add-to-list 'meow-mode-state-list '(notmuch-search-mode . insert))
   :init
   (meow-global-mode 1)
   (meow-motion-overwrite-define-key
@@ -471,21 +458,34 @@
 	 (nix-ts-mode . (lambda ()
 			  (require 'eglot)
 			  (add-to-list 'eglot-server-programs
-				       '(nix-ts-mode . ("nixd")))
-			  (eglot-ensure)))
+				       '(nix-ts-mode . ("nil")))
+				       ;; FIXME `nixd' completion not working, will give it a second try in the future
+				       ;; '(nix-ts-mode . ("nixd" :initializationOptions (:eval (:depth 10 :workers 4)
+				       ;; 						      :formatting (:command "alejandra")
+				       ;; 						      :options (:enable t :target (:installable "" :args ["--epxr" "(import \"${(builtins.getFlake \"n\")}/nixos\" {}).options" "--json"]))))))
+				       (eglot-ensure)))
 	 (nix-ts-mode . electric-pair-mode)
 	 (nix-ts-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode)))
 	 )
   :mode "\\.nix\\'"
   )
 
+(use-package dockerfile-ts-mode
+  :mode "Dockerfile\\'")
+
 (use-package python-ts-mode
   :hook ((python-ts-mode . (lambda ()
-			  (require 'eglot)
-			  (add-to-list 'eglot-server-programs
-				       '(python-ts-mode . ("jedi-language-server")))
-			  (eglot-ensure))))
+			     (require 'eglot)
+			     (add-to-list 'eglot-server-programs
+					  '(python-ts-mode . ("jedi-language-server")))
+			     (eglot-ensure))))
   :mode "\\.py\\'")
+
+(use-package typescript-ts-mode
+  :hook ((typescript-ts-mode . (lambda ()
+			  (require 'eglot)
+			  (eglot-ensure))))
+  :mode "\\.ts\\'")
 
 (use-package haskell-mode
   :hook ((haskell-mode . eglot-ensure)
@@ -568,6 +568,7 @@
   (add-to-list 'eat-semi-char-non-bound-keys '[?\e 108]) ; M-l
   (eat-update-semi-char-mode-map)
   (eat-reload)
+  :hook (eat-mode . (lambda () (setq-local scroll-margin 0)))
   :bind (("C-c o t" . eat-project))
   ;; FIXME doesn't work well
   ;; ((eat-mode . compilation-shell-minor-mode))
@@ -595,21 +596,24 @@
     	     (end-pos (line-end-position))
     	     (input (buffer-substring-no-properties start-pos end-pos)))
 	(message input)
-        (let* ((history (delete-dups (when (> (ring-size eshell-history-ring) 0)
-    				       (ring-elements eshell-history-ring))))
-	       (history-highlighted (mapcar #'(lambda (cmd)
-						(with-temp-buffer
-						  (text-mode)
-						  (insert cmd)
-						  (forward-line 0)
-						  ;; FIXME it breaks trying to highlight commands like `cd /ssh:host:~'
-						  ;; (eshell-syntax-highlighting--parse-and-highlight 'command (point-max))
-						  (add-face-text-property (point-min) (point-max) '(:background nil))
-						  (buffer-string)))
-					    history))
+        (let* (
+	       (history-shell (split-string (shell-command-to-string "history") "\n"))
+	       (history-eshell (delete-dups (when (> (ring-size eshell-history-ring) 0)
+    					      (ring-elements eshell-history-ring))))
+	       (history (append history-shell history-eshell))
+	       ;; (history-highlighted (mapcar #'(lambda (cmd)
+	       ;; 					(with-temp-buffer
+	       ;; 					  (text-mode)
+	       ;; 					  (insert cmd)
+	       ;; 					  (forward-line 0)
+	       ;; 					  ;; FIXME it breaks trying to highlight commands like `cd /ssh:host:~'
+	       ;; 					  ;; (eshell-syntax-highlighting--parse-and-highlight 'command (point-max))
+	       ;; 					  (add-face-text-property (point-min) (point-max) '(:background nil))
+	       ;; 					  (buffer-string)))
+	       ;; 				    history))
 	       (command (completing-read
 			 "Command: "
-			 history-highlighted
+			 history
 			 nil
 			 nil
 			 input
@@ -628,6 +632,8 @@
 
   (add-to-list 'eshell-modules-list 'eshell-tramp) ;; to use sudo in eshell
   ;; (add-to-list 'eshell-modules-list 'eshell-smart) ;; plan 9 style
+
+  :hook (eshell-mode . (lambda () (setq-local scroll-margin 0)))
   :bind (("C-c o e" . project-eshell)
 	 :map eshell-mode-map
 	 ("C-r" . ccr/eshell-history))) ;; i.e. just C-r in semi-char-mode
@@ -644,6 +650,10 @@
   :config
   (eshell-syntax-highlighting-global-mode +1))
 
+(use-package eshell-prompt-extras
+  :custom ((eshell-highlight-prompt nil)
+	   (eshell-prompt-function 'epe-theme-lambda)))
+
 (use-package popper
   :custom
   (popper-reference-buffers '("\*Messages\*"
@@ -653,9 +663,9 @@
 			      help-mode
 			      compilation-mode
 			      "^\\*.+-eshell.*\\*$" eshell-mode ;eshell as a popup
-			      "^\\*shell.*\\*$" shell-mode ;shell as a popup
-			      "^\\*term.*\\*$" term-mode ;term as a popup
-			      "^\\*eat.*\\*$" eat-mode ;eat as a popup
+			      "^\\*shell.*\\*$" shell-mode	;shell as a popup
+			      "^\\*term.*\\*$" term-mode	;term as a popup
+			      "^\\*eat.*\\*$" eat-mode		;eat as a popup
 			      ))
   (popper-window-height 0.33)
   (popper-echo-lines 1)
@@ -741,6 +751,30 @@
 
 (use-package with-editor
   :init (shell-command-with-editor-mode +1))
+
+(use-package go-translate
+  :custom
+  (gts-translate-list '(("it" "en") ("en" "it")))
+  (gts-default-translator
+   (gts-translator
+    :picker (gts-prompt-picker)
+    :engines `(,(gts-bing-engine)
+               ,(gts-google-engine :parser (gts-google-summary-parser)))
+    :render (gts-buffer-render)))
+  (gts-buffer-follow-p 't)
+  :bind (("C-c T t" . gts-do-translate)))
+
+(use-package notmuch
+  :custom
+  (notmuch-show-logo nil)
+  (send-mail-function 'sendmail-send-it))
+
+(use-package notmuch-notify
+  :hook (notmuch-hello-refresh . notmuch-notify-hello-refresh-status-message)
+  :custom
+  (alert-default-style 'notifications)
+  :config
+  (notmuch-notify-set-refresh-timer))
 
 (provide 'init)
 ;;; init.el ends here

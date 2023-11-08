@@ -3,7 +3,6 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     extra-package-indent-bars = {
       url = "github:jdtsmith/indent-bars";
@@ -15,15 +14,10 @@
     };
     extra-package-combobulate = {
       url = "github:mickeynp/combobulate";
-      # url = "github:aciceri/combobulate/nix";
       flake = false;
     };
     extra-package-agenix-el = {
       url = "github:t4ccer/agenix.el";
-      flake = false;
-    };
-    extra-package-dracula-theme = {
-      url = "github:aciceri/dracula-emacs";
       flake = false;
     };
     extra-package-chatgpt = {
@@ -32,6 +26,10 @@
     };
     extra-package-copilot = {
       url = "github:zerolfx/copilot.el";
+      flake = false;
+    };
+    extra-package-notmuch-notify = {
+      url = "github:firmart/notmuch-notify";
       flake = false;
     };
   };
