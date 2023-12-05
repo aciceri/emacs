@@ -39,6 +39,7 @@ with epkgs; let
     [
       meow
       dracula-theme
+      modus-themes
       # solaire-mode
       nerd-icons
       nerd-icons-completion
