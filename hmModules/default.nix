@@ -40,6 +40,7 @@
           home.packages = with pkgs;
             [
               binutils
+	      delta
               (ripgrep.override {withPCRE2 = true;})
               gnutls
               fd
