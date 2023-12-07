@@ -4,3 +4,7 @@ projects
 transient
 result
 .cache
+eln-cache
+eshell
+recentf
+tree-sitter
