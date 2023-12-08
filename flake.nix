@@ -42,7 +42,7 @@
         ./packages
         ./hmModules
         ./formatter
-        ./diff-closures
+        # ./diff-closures
 	./checks
 	./ci
       ];
