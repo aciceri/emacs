@@ -51,11 +51,11 @@
     "extra-package-copilot": {
       "flake": false,
       "locked": {
-        "lastModified": 1701683433,
-        "narHash": "sha256-UDG6s3Kj85c9MeR+frLStDAX0/AzcMSoqQuiTmbhnHU=",
+        "lastModified": 1702273665,
+        "narHash": "sha256-W4HuvX+AnmHIK6YCstUbmxfhunaCtvcswgtX+92riz4=",
         "owner": "zerolfx",
         "repo": "copilot.el",
-        "rev": "588089d296ed9c7083625ada8c624df128e1ae60",
+        "rev": "ba1d6018fdc2d735fecab1b2dcd4b5ea121b05ac",
         "type": "github"
       },
       "original": {
@@ -206,11 +206,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1701718080,
-        "narHash": "sha256-6ovz0pG76dE0P170pmmZex1wWcQoeiomUZGggfH9XPs=",
+        "lastModified": 1702151865,
+        "narHash": "sha256-9VAt19t6yQa7pHZLDbil/QctAgVsA66DLnzdRGqDisg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2c7f3c0fb7c08a0814627611d9d7d45ab6d75335",
+        "rev": "666fc80e7b2afb570462423cb0e1cf1a3a34fedd",
         "type": "github"
       },
       "original": {
