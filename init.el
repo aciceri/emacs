@@ -63,6 +63,7 @@
   (add-to-list 'default-frame-alist '(font . "Iosevka Comfy-13"))
   (recentf-mode +1)
   (fset #'jsonrpc--log-event #'ignore) ; this should be enabled only when needed, otherwise makes Emacs slower
+  (setq save-interprogram-paste-before-kill 't) ; system clipboard will be saved in the kill ring
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
@@ -168,6 +169,8 @@
 
 (use-package meow
   :hook (server-after-make-frame . (lambda () (meow--prepare-face)))
+  :custom
+  (meow-use-clipboard 't)
   :config
   (add-hook 'after-make-frame-functions (defun ccr/meow--prepare-face (_)
 					  (meow--prepare-face)
