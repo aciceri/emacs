@@ -66,6 +66,7 @@ with epkgs; let
       magit
       magit-delta
       magit-todos
+      difftastic
       with-editor
       diff-hl
       corfu
