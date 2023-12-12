@@ -7,6 +7,7 @@ with epkgs; let
     chatgpt = [polymode];
     copilot = [editorconfig dash s];
     notmuch-notify = [alert notmuch];
+    vertico-posframe = [posframe vertico];
   };
 
   overrideAttrsPerPackage = {
@@ -93,7 +94,6 @@ with epkgs; let
       consult-org-roam
       pass
       password-store-otp
-      vertico-posframe
       eldoc-box
       go-translate
       notmuch

@@ -33,6 +33,12 @@
       url = "github:firmart/notmuch-notify";
       flake = false;
     };
+    # TODO: use from MELPA when v0.7.5 reaches it
+    # https://github.com/tumashu/vertico-posframe/issues/36
+    extra-package-vertico-posframe = {
+      url = "github:tumashu/vertico-posframe";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:

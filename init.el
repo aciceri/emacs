@@ -341,16 +341,14 @@
   :config
   (vertico-posframe-mode +1)
   :custom
+  (vertico-multiform-commands
+   '((t
+      posframe
+      (vertico-posframe-poshandler . posframe-poshandler-frame-center)
+      (vertico-posframe-fallback-mode . vertico-buffer-mode))))
   (vertico-posframe-min-height 0)
   (vertico-posframe-min-width 80)
   (vertico-posframe-parameters '((alpha-background . 80)))
-  ;; I'm globally enabling vertico-posframe-mode in spite of being advised against it by the README
-  ;; It seems to work
-  ;;(vertico-multiform-commands
-  ;; '((t
-  ;;    posframe
-  ;;    (vertico-posframe-poshandler . posframe-poshandler-frame-center)
-  ;;    (vertico-posframe-fallback-mode . vertico-buffer-mode))))
 )
 
 (use-package marginalia
