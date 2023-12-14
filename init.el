@@ -754,7 +754,7 @@
 
 (use-package pass
   :config
-  (require 'password-store-otp)
+  (require 'password-store-otp) ;; FIXME use `use-pacakges' idiomatic way
   
   :bind (("C-c p p" . password-store-copy)
 	 ("C-c p o" . password-store-otp-token-copy)
