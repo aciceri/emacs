@@ -693,11 +693,34 @@
   :hook ((org-mode . variable-pitch-mode)
 	 (org-mode . visual-line-mode)
 	 (org-mode . visual-fill-column-mode))
-  :custom ((org-hide-emphasis-markers t)
+  :custom ((org-log-done 'time)
+	   (org-return-follows-link t)
+	   (org-hide-emphasis-markers t)
 	   (visual-fill-column-center-text t)
 	   (visual-fill-column-width 100)
-	   (fill-column 100))
+	   (fill-column 100)
+	   (org-capture-templates '(
+				    ("j" "Work Log Entry"
+				     entry (file+datetree "~/org/work-log.org")
+				     "* %?"
+				     :empty-lines 0)
+				    ("n" "Note"
+				     entry (file+headline "~/org/notes.org" "Random Notes")
+				     "** %?"
+				     :empty-lines 0)
+				    )))
+  :bind (("C-c o l" . org-store-link)
+	 ("C-c o a" . org-agenda)
+	 ("C-c o c" . org-capture)
+	 ("C-c b o" . org-switchb))
   :config
+  (defun ccr/org-capture (key)
+  "Capture a note using the template KEY and close the frame when done.
+This is meant to be an helper to be called from the window manager."
+  (interactive)
+  (org-capture nil key)
+  (add-hook 'kill-buffer-hook 'delete-frame nil 't) ;; destroy frame on exit
+  (delete-other-windows))
   ;; FIXME the following doesn't work when using the daemon, it should be executed only
   ;; one time after the first frame is created 
   (set-face-font 'variable-pitch "Dejavu Serif 14")
@@ -711,11 +734,15 @@
   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-tag nil :inherit 'fixed-pitch :weight 'bold :height 0.8)
-  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
-  )
+  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch))
+
+(use-package org-agenda
+  :custom
+  (org-agenda-files '("~/org"))
+  :bind (("C-c o a" . org-agenda)))
 
 (use-package org-roam)
-
+ 
 (use-package consult-org-roam
   :delight
   :after org-roam
