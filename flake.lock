@@ -51,11 +51,11 @@
     "extra-package-copilot": {
       "flake": false,
       "locked": {
-        "lastModified": 1702273665,
-        "narHash": "sha256-W4HuvX+AnmHIK6YCstUbmxfhunaCtvcswgtX+92riz4=",
+        "lastModified": 1702812188,
+        "narHash": "sha256-LYs8w3kZLyYpPqy3bYZgdCy4XvI8+d8kjACAwreHi6Y=",
         "owner": "zerolfx",
         "repo": "copilot.el",
-        "rev": "ba1d6018fdc2d735fecab1b2dcd4b5ea121b05ac",
+        "rev": "e24c165f4b17d404088b2921202d18f569dc470d",
         "type": "github"
       },
       "original": {
