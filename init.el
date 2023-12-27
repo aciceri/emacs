@@ -140,6 +140,7 @@
       (dired-mode . nerd-icons-dired-mode))
 
 (use-package indent-bars
+  :after consult
   :custom
   (indent-bars-treesit-support t)
   (indent-bars-spacing-override 2)
@@ -147,7 +148,8 @@
   (indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 0.4))
   (indent-bars-no-stipple-char (string-to-char "┋"))
   (indent-bars-prefer-character 't) ;; so it works also in terminal
-  )
+  :config
+  (advice-add 'consult-theme :after #'(lambda (&rest r) (with-eval-after-load 'indent-bars (indent-bars-reset)))))
 
 (use-package diredfl
   :config (diredfl-global-mode))
