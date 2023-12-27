@@ -710,19 +710,26 @@
 				     entry (file+headline "~/org/notes.org" "Random Notes")
 				     "** %?"
 				     :empty-lines 0)
-				    )))
+				    ))
+	   (org-auto-align-tags nil)
+	   (org-tags-column 0)
+	   (org-catch-invisible-edits 'show-and-error)
+	   (org-special-ctrl-a/e t)
+	   (org-insert-heading-respect-content t)
+	   (org-pretty-entities t)
+	   (org-ellipsis "…"))
   :bind (("C-c o l" . org-store-link)
 	 ("C-c o a" . org-agenda)
 	 ("C-c o c" . org-capture)
 	 ("C-c b o" . org-switchb))
   :config
   (defun ccr/org-capture (key)
-  "Capture a note using the template KEY and close the frame when done.
+    "Capture a note using the template KEY and close the frame when done.
 This is meant to be an helper to be called from the window manager."
-  (interactive)
-  (org-capture nil key)
-  (add-hook 'kill-buffer-hook 'delete-frame nil 't) ;; destroy frame on exit
-  (delete-other-windows))
+    (interactive)
+    (org-capture nil key)
+    (add-hook 'kill-buffer-hook 'delete-frame nil 't) ;; destroy frame on exit
+    (delete-other-windows))
   ;; FIXME the following doesn't work when using the daemon, it should be executed only
   ;; one time after the first frame is created 
   (set-face-font 'variable-pitch "Dejavu Serif 14")
@@ -741,7 +748,19 @@ This is meant to be an helper to be called from the window manager."
 (use-package org-agenda
   :custom
   (org-agenda-files '("~/org"))
+  (org-agenda-tags-column 0)
+  (org-agenda-block-separator ?─)
+  (org-agenda-time-grid
+   '((daily today require-timed)
+     (800 1000 1200 1400 1600 1800 2000)
+     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+  (org-agenda-current-time-string
+   "◀── now ─────────────────────────────────────────────────")
   :bind (("C-c o a" . org-agenda)))
+
+(use-package org-modern
+  :after org
+  :init (global-org-modern-mode))
 
 (use-package org-roam)
  
