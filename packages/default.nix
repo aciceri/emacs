@@ -19,6 +19,7 @@
           value = input;
         }) (lib.filterAttrs (inputName: _: ! builtins.isNull (builtins.match "extra-package-.*" inputName)) inputs);
       })
+      inputs.emacs-overlay.overlays.package
       # Some tree-sitter grammars in nixpksg are built with a too new ABI
       # https://github.com/NixOS/nixpkgs/issues/209114
       # (_: _: {

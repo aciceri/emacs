@@ -4,6 +4,7 @@
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    emacs-overlay.url = "github:nix-community/emacs-overlay";
     hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
     extra-package-indent-bars = {
       url = "github:jdtsmith/indent-bars";
@@ -33,12 +34,6 @@
       url = "github:firmart/notmuch-notify";
       flake = false;
     };
-    # TODO: use from MELPA when v0.7.5 reaches it
-    # https://github.com/tumashu/vertico-posframe/issues/36
-    extra-package-vertico-posframe = {
-      url = "github:tumashu/vertico-posframe";
-      flake = false;
-    };
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -53,4 +48,10 @@
 	./ci
       ];
     };
+
+  # Not hitting it
+  # nixConfig = {
+  #   extra-substituters = ["https://nix-community.cachix.org"];
+  #   extra-trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
+  # };
 }

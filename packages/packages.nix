@@ -1,13 +1,12 @@
-pkgs: epkgs:
-with epkgs; let
+pkgs: epkgs: let
   inherit (pkgs) lib;
+  inherit (epkgs) melpaPackages nongnuPackages elpaPackages;
 
   depsPerPackage = {
-    indent-bars = [compat];
-    chatgpt = [polymode];
-    copilot = [editorconfig dash s];
-    notmuch-notify = [alert notmuch];
-    vertico-posframe = [posframe vertico];
+    indent-bars = [elpaPackages.compat];
+    chatgpt = [melpaPackages.polymode];
+    copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s];
+    notmuch-notify = [melpaPackages.alert melpaPackages.notmuch];
   };
 
   overrideAttrsPerPackage = {
@@ -21,7 +20,7 @@ with epkgs; let
   # *Attrset* containig extra emacs packages from flake inputs
   extraPackages = lib.mapAttrs (inputName: input: let
     deps = depsPerPackage.${inputName} or [];
-    build = trivialBuild {
+    build = epkgs.trivialBuild {
       pname = inputName;
       src = input.outPath;
       version = input.shortRev;
@@ -37,7 +36,7 @@ with epkgs; let
     builtins.filter
     # if an extra package has the same name then give precedence to it
     (package: ! builtins.elem package.pname (builtins.attrNames extraPackages))
-    [
+    (with epkgs.melpaPackages; [
       meow
       dracula-theme
       modus-themes
@@ -48,7 +47,6 @@ with epkgs; let
       nerd-icons-dired
       ligature
       treemacs-nerd-icons
-      eat
       eshell-syntax-highlighting
       fish-completion # fish completion for eshell
       eshell-prompt-extras
@@ -57,7 +55,6 @@ with epkgs; let
       sideline
       sideline-flymake
       rainbow-delimiters
-      delight
       vertico
       marginalia
       consult
@@ -71,8 +68,6 @@ with epkgs; let
       with-editor
       diff-hl
       corfu
-      corfu-terminal
-      kind-icon
       cape
       which-key
       nix-mode
@@ -89,6 +84,7 @@ with epkgs; let
       haskell-mode
       terraform-mode
       diredfl
+      org-modern
       org-roam
       visual-fill-column
       consult-org-roam
@@ -97,6 +93,13 @@ with epkgs; let
       eldoc-box
       go-translate
       notmuch
-    ];
+    ]) ++ (with elpaPackages; [
+      delight
+      kind-icon
+      vertico-posframe
+    ]) ++ (with nongnuPackages; [
+      eat
+      corfu-terminal
+    ]); 
 in
   mainPackages ++ (builtins.attrValues extraPackages)
