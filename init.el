@@ -517,7 +517,9 @@
   (add-to-list 'eglot-server-programs
 	       '(terraform-mode . ("terraform-lsp")))
   :hook ((terraform-mode . eglot-ensure)
-	 (terraform-mode . tree-sitter-hl-mode)))
+	 (terraform-mode . tree-sitter-hl-mode)
+	 (terraform-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode)))
+	 ))
 
 (use-package yaml-mode
   :hook (yaml-mode . tree-sitter-hl-mode))
