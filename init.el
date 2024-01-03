@@ -67,6 +67,11 @@
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
+  (defun ccr/nixos-rebuild ()
+    (interactive)
+    (let* ((operation (completing-read "nixos-rebuild " '("switch" "boot" "test" "dry-activate")))
+	   (buffer-name (format "nixos-rebuild-%s" operation)))
+      (async-shell-command (format "sudo nixos-rebuild --flake fleet %s --override-input ccrEmacs /home/ccr/.config/emacs" operation) buffer-name)))
   )
 
 (use-package tramp
