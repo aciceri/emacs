@@ -1,4 +1,4 @@
-{inputs, config, ...}: {
+{inputs, ...}: {
   imports = [
     inputs.hercules-ci-effects.flakeModule
   ];
@@ -10,7 +10,11 @@
     enable = true;
     updateBranch = "updated-flake-lock";
     createPullRequest = true;
-    autoMergeMethod = null;
+    autoMergeMethod = "rebase";
+    baseMerge = {
+      enable = true;
+      method = "rebase";
+    };
     when = {
       minute = 30;
       hour = 13;
