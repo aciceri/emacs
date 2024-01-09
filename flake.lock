@@ -7,11 +7,11 @@
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
-        "lastModified": 1704703887,
-        "narHash": "sha256-o+7au3GsD4FHU8SUgT1zDWWH9BObWLs+Se76CfNIpL4=",
+        "lastModified": 1704790239,
+        "narHash": "sha256-WyH/mG9x5z/G+dzfC5BtQBuLM3QhjW7q1vaB+8vboV4=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "3a855a7a6f5f092ef81b45416c84f794b076f7ed",
+        "rev": "223007e4c62a86896fc662af5f9fd21a11cdb41b",
         "type": "github"
       },
       "original": {
@@ -71,11 +71,11 @@
     "extra-package-copilot": {
       "flake": false,
       "locked": {
-        "lastModified": 1704710633,
-        "narHash": "sha256-qUl4weCMi2TPLwVokvH/I/pvN1bnB6HzjYgTiQqUpL8=",
+        "lastModified": 1704802572,
+        "narHash": "sha256-VTk0UxTJOjpmU0z0lkZ8i46l68fK2p+qnQpRpLkyAho=",
         "owner": "zerolfx",
         "repo": "copilot.el",
-        "rev": "09c600549f8c962db4dc3ad847ed936f22132fe1",
+        "rev": "37cb633e4d8933170471ca8e435eaf415ed69f92",
         "type": "github"
       },
       "original": {
