@@ -27,7 +27,9 @@
       flake = false;
     };
     extra-package-copilot = {
-      url = "github:zerolfx/copilot.el";
+      # TODO remove rev when jsonrpc 1.0.23 hits emacs 29
+      # https://github.com/copilot-emacs/copilot.el/issues/232
+      url = "github:zerolfx/copilot.el/1542d76909636bf8804dd9c770f28818a897cfdc";
       flake = false;
     };
     extra-package-notmuch-notify = {

@@ -102,4 +102,10 @@ pkgs: epkgs: let
       corfu-terminal
     ]); 
 in
-  mainPackages ++ (builtins.attrValues extraPackages)
+mainPackages
+  ++ (builtins.attrValues extraPackages)
+  # Playing with EAF
+  ++ [(pkgs.callPackage ./eaf.nix {
+    inherit (epkgs) melpaBuild;
+    inherit (melpaPackages) ctable deferred epc s;
+  })]
