@@ -71,6 +71,7 @@ pkgs: epkgs: let
       cape
       which-key
       nix-mode
+      agenix
       unisonlang-mode
       purescript-mode
       dhall-mode

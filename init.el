@@ -71,7 +71,7 @@
     (interactive)
     (let* ((operation (completing-read "nixos-rebuild " '("switch" "boot" "test" "dry-activate")))
 	   (buffer-name (format "nixos-rebuild-%s" operation)))
-      (async-shell-command (format "sudo nixos-rebuild --flake fleet %s --override-input ccrEmacs /home/ccr/.config/emacs" operation) buffer-name)))
+      (async-shell-command (format "sudo nixos-rebuild --flake fleet %s --override-input ccrEmacs /home/ccr/.config/emacs -L" operation) buffer-name)))
   )
 
 (use-package tramp
@@ -91,11 +91,6 @@
 					  (load-theme 'dracula 't)
 					  (meow--prepare-face)
 					  (remove-hook 'after-make-frame-functions 'ccr/theme-init))))
-
-;; (use-package solaire-mode
-;;   :init
-;;   (solaire-global-mode +1)
-;;   :custom ((solaire-mode-themes-to-face-swap '(dracula))))
 
 (use-package ligature
   :config
@@ -160,10 +155,7 @@
   :config (diredfl-global-mode))
 
 (use-package treemacs
-  :config
-  ;; FIXME when this is closed: https://github.com/hlissner/emacs-solaire-mode/issues/51
-  (push '(treemacs-window-background-face . solaire-default-face) solaire-mode-remap-alist)
-  (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist)
+  :after solaire-mode
   :custom
   (treemacs-show-cursor nil)
   (treemacs-display-current-project-exclusively t)
@@ -461,15 +453,7 @@
 ;;   :config
 ;;   (global-nix-prettify-mode))
 
-(use-package agenix
-  :after (inheritenv)
-  :custom
-  ;; FIXME 🤮
-  ((agenix-age-program "/nix/store/d1gkdszgmmcabz4pb06h8pvzkzml69g5-age-1.1.1/bin/age")
-   (agenix-key-files '("~/.ssh/id_rsa" "~/.ssh/id_ed25519" "~/.ssh/mlabs")))
-  :config
-  (inheritenv-add-advice 'agenix--process-exit-code-and-output)
-)
+(use-package agenix)
 
 (use-package nix-ts-mode
   :custom ((nix-ts-mode--embed-bash nil))
@@ -478,11 +462,11 @@
 			  (require 'eglot)
 			  (add-to-list 'eglot-server-programs
 				       '(nix-ts-mode . ("nil")))
-				       ;; FIXME `nixd' completion not working, will give it a second try in the future
-				       ;; '(nix-ts-mode . ("nixd" :initializationOptions (:eval (:depth 10 :workers 4)
-				       ;; 						      :formatting (:command "alejandra")
-				       ;; 						      :options (:enable t :target (:installable "" :args ["--epxr" "(import \"${(builtins.getFlake \"n\")}/nixos\" {}).options" "--json"]))))))
-				       (eglot-ensure)))
+			  ;; FIXME `nixd' completion not working, will give it a second try in the future
+			  ;; '(nix-ts-mode . ("nixd" :initializationOptions (:eval (:depth 10 :workers 4)
+			  ;; 						      :formatting (:command "alejandra")
+			  ;; 						      :options (:enable t :target (:installable "" :args ["--epxr" "(import \"${(builtins.getFlake \"n\")}/nixos\" {}).options" "--json"]))))))
+			  (eglot-ensure)))
 	 (nix-ts-mode . electric-pair-mode)
 	 (nix-ts-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode)))
 	 )
@@ -508,7 +492,9 @@
 
 (use-package haskell-mode
   :hook ((haskell-mode . eglot-ensure)
-	 (haskell-mode . tree-sitter-hl-mode)))
+	 ;; (haskell-mode . tree-sitter-hl-mode) # doesn't exist yet?
+	 )
+  :mode "\\.hs\\'")
 
 (use-package purescript-mode
   :custom ((project-vc-extra-root-markers '("spago.dhall")))
@@ -559,15 +545,15 @@
   :custom
   (eldoc-box-only-multiline nil)
   (eldoc-box-lighter "ElBox")
-  :hook ((eglot-managed-mode . eldoc-box-hover-mode)
-	 (emacs-lisp-mode . eldoc-box-hover-mode)))
+  :bind (("C-c h" . eldoc-box-help-at-point)))
 
-(use-package diff-hl
-  :init
-  (global-diff-hl-mode 1)
-  (diff-hl-margin-mode 1))
+  (use-package diff-hl
+    :init
+    (global-diff-hl-mode 1)
+    (diff-hl-margin-mode 1))
 
 (use-package envrc
+  :hook (agenix-pre-mode . envrc-mode)
   :config
   (envrc-global-mode +1))
 
@@ -683,6 +669,7 @@
 			      (completion-list-mode . hide)
 			      help-mode
 			      compilation-mode
+			      "^\\*Nix-REPL*\\*$" nix-repl-mode ;eshell as a popup
 			      "^\\*.+-eshell.*\\*$" eshell-mode ;eshell as a popup
 			      "^\\*shell.*\\*$" shell-mode	;shell as a popup
 			      "^\\*term.*\\*$" term-mode	;term as a popup
@@ -804,6 +791,7 @@ This is meant to be an helper to be called from the window manager."
 (use-package copilot
   :custom
   (copilot-max-char -1)
+  (copilot-indent-offset-warning-disable 't)
   :hook (prog-mode org-mode)
   :bind (("C-<tab>" . copilot-accept-completion)))
 
@@ -845,6 +833,20 @@ This is meant to be an helper to be called from the window manager."
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
+ '(org-fold-catch-invisible-edits 'show-and-error nil nil "Customized with use-package org")
+ '(safe-local-variable-values '((copilot-mode 0) (copilot-mode -1))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime unresolved)
 ;; End:
