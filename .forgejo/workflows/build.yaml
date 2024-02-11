@@ -1,7 +1,8 @@
 on: [push]
 jobs:
   test:
-    runs-on: nix 
+    runs-on: nix
     steps:
-      - uses: actions/checkout@v3
-      - run: nix --version
+      - uses: actions/checkout@v4
+      - run: cat /nix/store/cscv53kqarckmbz6729ngmyxg3y53n9c-push-to-cache.sh
+      - run: nix-fast-build --no-nom
