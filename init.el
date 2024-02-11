@@ -453,7 +453,9 @@
 ;;   :config
 ;;   (global-nix-prettify-mode))
 
-(use-package agenix)
+(use-package agenix
+  :after envrc
+  :hook (agenix-pre-mode . envrc-mode))
 
 (use-package nix-ts-mode
   :custom ((nix-ts-mode--embed-bash nil))
@@ -553,7 +555,6 @@
     (diff-hl-margin-mode 1))
 
 (use-package envrc
-  :hook (agenix-pre-mode . envrc-mode)
   :config
   (envrc-global-mode +1))
 
