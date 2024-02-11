@@ -493,9 +493,7 @@
   :mode "\\.ts\\'")
 
 (use-package haskell-mode
-  :hook ((haskell-mode . eglot-ensure)
-	 ;; (haskell-mode . tree-sitter-hl-mode) # doesn't exist yet?
-	 )
+  :hook ((haskell-mode . eglot-ensure))
   :mode "\\.hs\\'")
 
 (use-package purescript-mode
