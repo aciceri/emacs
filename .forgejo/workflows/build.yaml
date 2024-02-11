@@ -1,0 +1,7 @@
+on: [push]
+jobs:
+  test:
+    runs-on: nix 
+    steps:
+      - uses: actions/checkout@v3
+      - run: nix --version
