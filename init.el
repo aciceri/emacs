@@ -67,6 +67,7 @@
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
+  (load-theme 'modus-operandi 't)
   (defun ccr/nixos-rebuild ()
     (interactive)
     (let* ((operation (completing-read "nixos-rebuild " '("switch" "boot" "test" "dry-activate")))
@@ -85,12 +86,12 @@
   (tramp-use-ssh-controlmaster-options nil) ;; makes tramp use ~/.ssh/config
   )
 
-(use-package dracula-theme
-  :config
-  (add-hook 'after-make-frame-functions (defun ccr/theme-init (_)
-					  (load-theme 'dracula 't)
-					  (meow--prepare-face)
-					  (remove-hook 'after-make-frame-functions 'ccr/theme-init))))
+;; (use-package dracula-theme
+;;   :config
+;;   (add-hook 'after-make-frame-functions (defun ccr/theme-init (_)
+;; 					  (load-theme 'dracula 't)
+;; 					  (meow--prepare-face)
+;; 					  (remove-hook 'after-make-frame-functions 'ccr/theme-init))))
 
 (use-package ligature
   :config
@@ -149,7 +150,20 @@
   (indent-bars-no-stipple-char (string-to-char "┋"))
   (indent-bars-prefer-character 't) ;; so it works also in terminal
   :config
-  (advice-add 'consult-theme :after #'(lambda (&rest r) (with-eval-after-load 'indent-bars (indent-bars-reset)))))
+  ;; We need an hook to re-compute indent-bars colors when the theme changes
+  ;; https://github.com/jdtsmith/indent-bars/issues/31
+  
+  (defvar after-enable-theme-hook nil
+    "Normal hook run after enabling a theme.")
+
+  (defun run-after-enable-theme-hook (&rest _args)
+    "Run `after-enable-theme-hook'."
+    (run-hooks 'after-enable-theme-hook))
+
+  (advice-add 'enable-theme :after #'run-after-enable-theme-hook)
+  
+  (add-hook 'after-enable-theme-hook #'indent-bars-reset)
+)
 
 (use-package diredfl
   :config (diredfl-global-mode))
@@ -725,19 +739,16 @@ This is meant to be an helper to be called from the window manager."
     (delete-other-windows))
   ;; FIXME the following doesn't work when using the daemon, it should be executed only
   ;; one time after the first frame is created 
-  (set-face-font 'variable-pitch "Dejavu Serif 14")
-  (set-face-font 'fixed-pitch "Iosevka 14")
+  (set-face-font 'variable-pitch "Dejavu Serif-14")
+  (set-face-font 'fixed-pitch "Iosevka Comfy-14")
 
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-meta-line nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-property-value nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-tag nil :inherit 'fixed-pitch :weight 'bold :height 0.8)
-  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
-
+  (dolist (face '(org-block-begin-line 
+                org-block-end-line 
+                org-verbatim
+		org-code
+                ))
+  (set-face-attribute face nil :inherit 'fixed-pitch))
+  
   (org-babel-do-load-languages
    'org-babel-load-languages '((haskell . t))))
 
@@ -821,6 +832,18 @@ This is meant to be an helper to be called from the window manager."
   (gts-buffer-follow-p 't)
   :bind (("C-c T t" . gts-do-translate)))
 
+(use-package message
+  :custom
+  (message-send-mail-function 'smtpmail-send-it)
+  (send-mail-function 'smtpmail-send-it)
+  (user-mail-address "andrea.ciceri@autistici.org")
+  (smtpmail-smtp-server "mail.autistici.org")
+  (smtpmail-stream-type 'starttls)
+  (smtpmail-smtp-service 587)
+  ;; also the following line is needeed in ~/.authinfo.gpg
+  ;; machine mail.autistici.org login andrea.ciceri@autistici.org password <password>
+  )
+
 (use-package notmuch
   :custom
   (notmuch-show-logo nil)
@@ -828,7 +851,7 @@ This is meant to be an helper to be called from the window manager."
 
 (use-package notmuch-notify
   :hook (notmuch-hello-refresh . notmuch-notify-hello-refresh-status-message)
-  :custom
+  :custo
   (alert-default-style 'notifications)
   :config
   (notmuch-notify-set-refresh-timer))
@@ -840,6 +863,12 @@ This is meant to be an helper to be called from the window manager."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("5bafdfa3e21f921abf9b9fd77e1e0ce032e62e3a6f8f13ec8ce7945727c654e9"
+     "5f92b9fc442528b6f106eaefa18bb5e7bfa0d737164e18f1214410fef2a6678d"
+     "b7f70bd00f79099f11d67a25c592d70593377488a263bb3dd73dee99b0549dba"
+     "7d10494665024176a90895ff7836a8e810d9549a9872c17db8871900add93d5c"
+     "b5c3c59e2fff6877030996eadaa085a5645cc7597f8876e982eadc923f597aca" default))
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(org-fold-catch-invisible-edits 'show-and-error nil nil "Customized with use-package org")
  '(safe-local-variable-values '((copilot-mode 0) (copilot-mode -1))))

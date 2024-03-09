@@ -1,8 +1,11 @@
-on: [push]
+on:
+  push:
+    branches: ["*"]
 jobs:
   test:
     runs-on: nix
     steps:
       - uses: actions/checkout@v4
-      - run: cat /nix/store/cscv53kqarckmbz6729ngmyxg3y53n9c-push-to-cache.sh
-      - run: nix-fast-build --no-nom
+        name: Checkout repository
+      - name: Build with nix
+        run: nix-fast-build --no-nom

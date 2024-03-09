@@ -3,8 +3,8 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
+    nixpkgs.follows = "emacs-overlay/nixpkgs";
     hercules-ci-effects.url = "github:hercules-ci/hercules-ci-effects";
     extra-package-indent-bars = {
       url = "github:jdtsmith/indent-bars";
