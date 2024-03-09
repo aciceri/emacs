@@ -345,8 +345,8 @@
       posframe
       (vertico-posframe-poshandler . posframe-poshandler-frame-center)
       (vertico-posframe-fallback-mode . vertico-buffer-mode))))
-  (vertico-posframe-min-height 0)
-  (vertico-posframe-min-width 80)
+  (vertico-posframe-min-height 1)
+  ;; (vertico-posframe-min-width 80)
   (vertico-posframe-parameters '((alpha-background . 80)))
 )
 
@@ -736,7 +736,10 @@ This is meant to be an helper to be called from the window manager."
   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-tag nil :inherit 'fixed-pitch :weight 'bold :height 0.8)
-  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages '((haskell . t))))
 
 (use-package org-agenda
   :custom

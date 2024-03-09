@@ -5,7 +5,7 @@ pkgs: epkgs: let
   depsPerPackage = {
     indent-bars = [elpaPackages.compat];
     chatgpt = [melpaPackages.polymode];
-    copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s];
+    copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s melpaPackages.f];
     notmuch-notify = [melpaPackages.alert melpaPackages.notmuch];
   };
 
@@ -94,10 +94,12 @@ pkgs: epkgs: let
       eldoc-box
       go-translate
       notmuch
+      poly-org
     ]) ++ (with elpaPackages; [
       delight
       kind-icon
       vertico-posframe
+      ef-themes
     ]) ++ (with nongnuPackages; [
       eat
       corfu-terminal
