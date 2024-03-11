@@ -150,19 +150,7 @@
   (indent-bars-no-stipple-char (string-to-char "┋"))
   (indent-bars-prefer-character 't) ;; so it works also in terminal
   :config
-  ;; We need an hook to re-compute indent-bars colors when the theme changes
-  ;; https://github.com/jdtsmith/indent-bars/issues/31
-  
-  (defvar after-enable-theme-hook nil
-    "Normal hook run after enabling a theme.")
-
-  (defun run-after-enable-theme-hook (&rest _args)
-    "Run `after-enable-theme-hook'."
-    (run-hooks 'after-enable-theme-hook))
-
-  (advice-add 'enable-theme :after #'run-after-enable-theme-hook)
-  
-  (add-hook 'after-enable-theme-hook #'indent-bars-reset)
+  (add-hook 'enable-theme-functions #'(lambda (&rest _) (indent-bars-reset)))
 )
 
 (use-package diredfl
