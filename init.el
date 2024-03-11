@@ -149,8 +149,8 @@
   (indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 0.4))
   (indent-bars-no-stipple-char (string-to-char "┋"))
   (indent-bars-prefer-character 't) ;; so it works also in terminal
-  :config
-  (add-hook 'enable-theme-functions #'(lambda (&rest _) (indent-bars-reset)))
+  ;; :config
+  ;; (add-hook 'enable-theme-functions #'(lambda (&rest _) (indent-bars-reset)))
 )
 
 (use-package diredfl
