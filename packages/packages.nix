@@ -94,6 +94,7 @@ pkgs: epkgs: let
       eldoc-box
       go-translate
       notmuch
+      consult-notmuch
       poly-org
     ]) ++ (with elpaPackages; [
       delight
