@@ -15,7 +15,7 @@ jobs:
         run: git switch -c update-flake-lock
       - name: Configure git as `Seven of Nix`
         run: |
-          git config --global user.email "sevenofnine+andrea.ciceri@autistici.org"
+          git config --global user.email "sevenofnine@stronzi.org"
           git config --global user.name "Seven of Nine"
       - name: Update flake's lockfile and create commit
         run: nix flake update --commit-lock-file
