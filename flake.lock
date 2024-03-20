@@ -103,16 +103,16 @@
     "extra-package-nix-ts-mode": {
       "flake": false,
       "locked": {
-        "lastModified": 1694965545,
-        "narHash": "sha256-HijDb+2ojDk1Evv/KEIrZ/xW+QXz6IJoUllniTsE3hs=",
-        "owner": "aciceri",
+        "lastModified": 1705596103,
+        "narHash": "sha256-jEUmhfLE7cFan4/PF4qBiEOLsjM3Q4iSDTlM+0CYwZg=",
+        "owner": "antifuchs",
         "repo": "nix-ts-mode",
-        "rev": "8da9a76cd014d56ee734553a32c9e006e375bce4",
+        "rev": "0ef4e663add03d026a1804f57ac7d5453a635b15",
         "type": "github"
       },
       "original": {
-        "owner": "aciceri",
-        "ref": "improved",
+        "owner": "antifuchs",
+        "ref": "improve-indented-string-indentation",
         "repo": "nix-ts-mode",
         "type": "github"
       }

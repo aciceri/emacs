@@ -11,7 +11,7 @@
       flake = false;
     };
     extra-package-nix-ts-mode = {
-      url = "github:aciceri/nix-ts-mode/improved";
+      url = "github:antifuchs/nix-ts-mode/improve-indented-string-indentation";
       flake = false;
     };
     extra-package-combobulate = {
