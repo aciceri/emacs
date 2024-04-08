@@ -96,6 +96,7 @@ pkgs: epkgs: let
       notmuch
       consult-notmuch
       poly-org
+      casual
     ]) ++ (with elpaPackages; [
       delight
       kind-icon
