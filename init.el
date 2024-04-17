@@ -141,7 +141,6 @@
       (dired-mode . nerd-icons-dired-mode))
 
 (use-package indent-bars
-  :after consult
   :custom
   (indent-bars-treesit-support t)
   (indent-bars-spacing-override 2)
@@ -149,8 +148,6 @@
   (indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 0.4))
   (indent-bars-no-stipple-char (string-to-char "┋"))
   (indent-bars-prefer-character 't) ;; so it works also in terminal
-  ;; :config
-  ;; (add-hook 'enable-theme-functions #'(lambda (&rest _) (indent-bars-reset)))
 )
 
 (use-package diredfl
@@ -641,13 +638,27 @@
   (add-to-list 'eshell-modules-list 'eshell-tramp) ;; to use sudo in eshell
   ;; (add-to-list 'eshell-modules-list 'eshell-smart) ;; plan 9 style
 
+  (setq ccr/eshell-aliases
+	'((g  . magit)
+	  (gl . magit-log)
+	  (d  . dired)
+	  (o  . find-file)	
+	  (oo . find-file-other-window)
+	  (l  . (lambda () (eshell/ls '-la)))
+	  (eshell/clear . eshell/clear-scrollback)))
+  
+  (mapc (lambda (alias)
+	  (defalias (car alias) (cdr alias)))
+	ccr/eshell-aliases)
+
   :hook (eshell-mode . (lambda () (setq-local scroll-margin 0)))
   :bind (("C-c o e" . project-eshell)
 	 :map eshell-mode-map
 	 ("C-r" . ccr/eshell-history))) ;; i.e. just C-r in semi-char-mode
 
 (use-package esh-autosuggest
-  :hook (eshell-mode . esh-autosuggest-mode))
+  ;; :hook (eshell-mode . esh-autosuggest-mode) # FIXME otherwise emacs stucks
+  )
 
 (use-package fish-completion-mode
   :hook ((eshell-mode . fish-completion-mode)))
@@ -837,10 +848,14 @@ This is meant to be an helper to be called from the window manager."
   (notmuch-show-logo nil)
   (send-mail-function 'sendmail-send-it))
 
+(use-package alert
+  :config
+  (alert "Emacs started")
+  :custom
+  (alert-default-style 'notifications))
+
 (use-package notmuch-notify
   :hook (notmuch-hello-refresh . notmuch-notify-hello-refresh-status-message)
-  :custo
-  (alert-default-style 'notifications)
   :config
   (notmuch-notify-set-refresh-timer))
 
@@ -859,7 +874,10 @@ This is meant to be an helper to be called from the window manager."
      "b5c3c59e2fff6877030996eadaa085a5645cc7597f8876e982eadc923f597aca" default))
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(org-fold-catch-invisible-edits 'show-and-error nil nil "Customized with use-package org")
- '(safe-local-variable-values '((copilot-mode 0) (copilot-mode -1))))
+ '(safe-local-variable-values
+   '((eval progn (require 'org-re-reveal)
+	   (add-hook 'after-save-hook #'org-re-reveal-export-to-html nil t))
+     (copilot-mode 0) (copilot-mode -1))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -97,6 +97,7 @@ pkgs: epkgs: let
       consult-notmuch
       poly-org
       casual
+      org-re-reveal
     ]) ++ (with elpaPackages; [
       delight
       kind-icon
