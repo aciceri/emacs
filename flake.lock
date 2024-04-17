@@ -87,11 +87,11 @@
     "extra-package-indent-bars": {
       "flake": false,
       "locked": {
-        "lastModified": 1712632727,
-        "narHash": "sha256-i1A4TlyhgEMqgqJmTQiT4fgWoUlelRFNC38XwuPSyGM=",
+        "lastModified": 1713279232,
+        "narHash": "sha256-usa8xpg2dvXwFcQf8gKSZ+kOy6EGJ+e2mkvGAjEX66o=",
         "owner": "jdtsmith",
         "repo": "indent-bars",
-        "rev": "e20ba1caead519832221abad75cce75bf1787499",
+        "rev": "88261051823961f0fc60c3c76b0cf2bae4ab32e4",
         "type": "github"
       },
       "original": {

@@ -141,6 +141,8 @@
       (dired-mode . nerd-icons-dired-mode))
 
 (use-package indent-bars
+  :config
+  (require 'indent-bars-ts)
   :custom
   (indent-bars-treesit-support t)
   (indent-bars-spacing-override 2)
