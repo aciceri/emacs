@@ -89,8 +89,8 @@ pkgs: epkgs: let
       notmuch
       consult-notmuch
       poly-org
-      # casual
       org-re-reveal
+      casual 
       gptel
     ]) ++ (with elpaPackages; [
       delight
