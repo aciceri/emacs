@@ -89,8 +89,8 @@ pkgs: epkgs: let
       notmuch
       consult-notmuch
       poly-org
-      org-re-reveal
       casual 
+      # org-re-reveal # FIXME very not nice hash mismatch when building
       gptel
     ]) ++ (with elpaPackages; [
       delight
