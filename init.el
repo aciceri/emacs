@@ -465,7 +465,7 @@
 	 (nix-ts-mode . (lambda ()
 			  (require 'eglot)
 			  (add-to-list 'eglot-server-programs
-				       '(nix-ts-mode . ("nil")))
+				       '(nix-ts-mode . ("nixd")))
 			  ;; FIXME `nixd' completion not working, will give it a second try in the future
 			  ;; '(nix-ts-mode . ("nixd" :initializationOptions (:eval (:depth 10 :workers 4)
 			  ;; 						      :formatting (:command "alejandra")
