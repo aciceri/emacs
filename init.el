@@ -48,7 +48,8 @@
   (backup-directory-alist `(("." . ,temporary-file-directory)))
   (auto-save-files-name-transforms `((".*" ,temporary-file-directory t)))
   (backup-by-copying t)
-  (focus-follows-mouse 't)
+  (focus-follows-mouse t)
+  (mouse-autoselect-window t)
   :config
   (set-face-background 'vertical-border (face-background 'default))
   (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?┃))
