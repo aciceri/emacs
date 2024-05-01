@@ -8,13 +8,7 @@ pkgs: epkgs: let
     notmuch-notify = [melpaPackages.alert melpaPackages.notmuch];
   };
 
-  overrideAttrsPerPackage = {
-    copilot = old: {
-      postInstall = ''
-        cp -r "$src/dist" "$LISPDIR"
-      '';
-    };
-  };
+  overrideAttrsPerPackage = { };
 
   # *Attrset* containig extra emacs packages from flake inputs
   extraPackages = lib.mapAttrs (inputName: input: let
