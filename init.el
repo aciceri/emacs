@@ -793,14 +793,7 @@ This is meant to be an helper to be called from the window manager."
   ("C-c n l" . consult-org-roam-forward-links)
   ("C-c n r" . consult-org-roam-search))
 
-(use-package chatgpt
   :config
-  (dolist (e '(("spiega" . "Spiega il seguente")
-	       ("documenta" . "Documenta il seguente usando la sintassi appropriata in modo che possa essere inserito nel codice")
-	       ))
-    (push e chatgpt-code-query-map))
-  :bind
-  ("C-c i" . chatgpt-query))
 
 (use-package copilot
   :custom
@@ -811,7 +804,7 @@ This is meant to be an helper to be called from the window manager."
 
 (use-package pass
   :config
-  (require 'password-store-otp) ;; FIXME use `use-pacakges' idiomatic way
+  (require 'password-store-otp) ;; FIXME use `use-pacakge' idiomatic way
   
   :bind (("C-c p p" . password-store-copy)
 	 ("C-c p o" . password-store-otp-token-copy)

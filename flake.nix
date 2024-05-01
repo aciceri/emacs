@@ -22,10 +22,6 @@
       url = "github:t4ccer/agenix.el";
       flake = false;
     };
-    extra-package-chatgpt = {
-      url = "github:joshcho/ChatGPT.el";
-      flake = false;
-    };
     extra-package-copilot = {
       url = "github:zerolfx/copilot.el";
       flake = false;

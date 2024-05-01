@@ -4,7 +4,6 @@ pkgs: epkgs: let
 
   depsPerPackage = {
     indent-bars = [elpaPackages.compat];
-    chatgpt = [melpaPackages.polymode];
     copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s melpaPackages.f];
     notmuch-notify = [melpaPackages.alert melpaPackages.notmuch];
   };
@@ -98,6 +97,7 @@ pkgs: epkgs: let
       poly-org
       # casual
       org-re-reveal
+      gptel
     ]) ++ (with elpaPackages; [
       delight
       kind-icon
