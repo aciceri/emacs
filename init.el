@@ -794,7 +794,29 @@ This is meant to be an helper to be called from the window manager."
   ("C-c n l" . consult-org-roam-forward-links)
   ("C-c n r" . consult-org-roam-search))
 
+(use-package gptel
+  :custom
+  (gptel-api-key (getenv "OPENAI_API_KEY"))
   :config
+  (defun ccr/suggest-eshell-command ()
+    (interactive)
+    (save-excursion
+      (eshell-bol)
+      (let ((start-pos (point))
+	    (end-pos (line-end-position)))
+	(gptel-request
+	    (buffer-substring-no-properties start-pos end-pos) ;the prompt
+	:system "You are proficient with emacs shell (eshell), translate the following to something I could directly prompt to the shell. Your responses should only be code, without explanation or formatting."
+	:buffer (current-buffer)
+	:context (cons (set-marker (make-marker) start-pos)
+                       (set-marker (make-marker) end-pos))
+	:callback
+	(lambda (response info)
+	  (if (not response)
+              (message "ChatGPT response failed with: %s" (plist-get info :status))
+	    (kill-region start-pos end-pos)
+	    (insert response)))))))
+  )
 
 (use-package copilot
   :custom
