@@ -68,7 +68,7 @@
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
-  (load-theme 'modus-operandi 't)
+  (load-theme 'dracula 't)
   (defun ccr/nixos-rebuild ()
     (interactive)
     (let* ((operation (completing-read "nixos-rebuild " '("switch" "boot" "test" "dry-activate")))
@@ -86,13 +86,6 @@
   :custom
   (tramp-use-ssh-controlmaster-options nil) ;; makes tramp use ~/.ssh/config
   )
-
-;; (use-package dracula-theme
-;;   :config
-;;   (add-hook 'after-make-frame-functions (defun ccr/theme-init (_)
-;; 					  (load-theme 'dracula 't)
-;; 					  (meow--prepare-face)
-;; 					  (remove-hook 'after-make-frame-functions 'ccr/theme-init))))
 
 (use-package ligature
   :config
