@@ -409,18 +409,21 @@
   (which-key-setup-side-window-right))
 
 (use-package magit
-  :hook ((magit-mode . magit-delta-mode))
-  :custom
-  (magit-todos-keyword-suffix "([^)]+):")
-  :config
-  (magit-todos-mode +1)
   :bind (("C-c o g" . magit)))
+
+(use-package magit-delta
+  :hook (magit-mode . magit-delta-mode))
+
+(use-package magit-todos
+  :after magit
+  :custom (magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?")
+  :config (magit-todos-mode 1))
 
 (use-package difftastic
   :demand t
   :bind (:map magit-blame-read-only-mode-map
-         ("D" . difftastic-magit-show)
-         ("S" . difftastic-magit-show))
+              ("D" . difftastic-magit-show)
+              ("S" . difftastic-magit-show))
   :config
   (eval-after-load 'magit-diff
     '(transient-append-suffix 'magit-diff '(-1 -1)
