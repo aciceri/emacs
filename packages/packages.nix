@@ -32,6 +32,8 @@ pkgs: epkgs: let
     (with epkgs.melpaPackages; [
       meow
       dracula-theme
+      nord-theme
+      catppuccin-theme
       modus-themes
       # solaire-mode
       nerd-icons

@@ -68,13 +68,19 @@
   (defun ccr/reload-emacs ()
     (interactive)
     (load-file "~/.config/emacs/init.el"))
-  (load-theme 'dracula 't)
+  (load-theme 'catppuccin 't)
   (defun ccr/nixos-rebuild ()
     (interactive)
     (let* ((operation (completing-read "nixos-rebuild " '("switch" "boot" "test" "dry-activate")))
 	   (buffer-name (format "nixos-rebuild-%s" operation)))
       (async-shell-command (format "sudo nixos-rebuild --flake fleet %s --override-input ccrEmacs /home/ccr/.config/emacs -L" operation) buffer-name)))
   )
+
+(use-package doc-view
+  :custom
+  (doc-view-scale-internally nil)
+  (doc-view-imenu-enabled 't)
+  (doc-view-continuous t))
 
 (use-package tramp
   :config

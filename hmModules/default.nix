@@ -47,10 +47,16 @@
               hunspell
               python3
               imagemagick
+	      ghostscript_headless
+	      mupdf-headless
+	      poppler_utils
               ffmpegthumbnailer
               mediainfo
               unzipNLS
               nodejs_20
+
+	      pkgs.qadwaitadecorations
+	      pkgs.kdePackages.qtwayland
             ]
             ++ (with hunspellDicts; [
               en_US-large
