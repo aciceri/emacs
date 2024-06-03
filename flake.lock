@@ -100,6 +100,22 @@
         "type": "github"
       }
     },
+    "extra-package-meow-tree-sitter": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1717451530,
+        "narHash": "sha256-hke2CGOY8x43snrr6bDY+SnQjgRLSMcmWfA1oItXAeE=",
+        "owner": "skissue",
+        "repo": "meow-tree-sitter",
+        "rev": "c23a499abac797b64bc458f370237a1d6b140a2e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "skissue",
+        "repo": "meow-tree-sitter",
+        "type": "github"
+      }
+    },
     "extra-package-nix-ts-mode": {
       "flake": false,
       "locked": {
@@ -282,6 +298,7 @@
         "extra-package-copilot": "extra-package-copilot",
         "extra-package-gptel": "extra-package-gptel",
         "extra-package-indent-bars": "extra-package-indent-bars",
+        "extra-package-meow-tree-sitter": "extra-package-meow-tree-sitter",
         "extra-package-nix-ts-mode": "extra-package-nix-ts-mode",
         "extra-package-notmuch-notify": "extra-package-notmuch-notify",
         "flake-parts": "flake-parts",

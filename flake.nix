@@ -30,6 +30,10 @@
       url = "github:firmart/notmuch-notify";
       flake = false;
     };
+    extra-package-meow-tree-sitter = {
+      url = "github:skissue/meow-tree-sitter";
+      flake = false;
+    };
     # TODO remove when there will be a new release including GPT-4o 
     extra-package-gptel = {
       url = "github:karthink/gptel";

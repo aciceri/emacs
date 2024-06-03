@@ -7,9 +7,17 @@ pkgs: epkgs: let
     copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s melpaPackages.f];
     notmuch-notify = [melpaPackages.alert melpaPackages.notmuch];
     gptel = [pkgs.emacsPackages.transient elpaPackages.compat];
+    meow-tree-sitter = [melpaPackages.meow];
   };
 
-  overrideAttrsPerPackage = { };
+  overrideAttrsPerPackage = {
+    meow-tree-sitter = old: {
+      installPhase = old.installPhase + ''
+	mkdir -p $out/share/emacs/site-lisp
+        cp -R ${old.src}/queries $out/share/emacs/site-lisp
+      '';
+    };
+  };
 
   # *Attrset* containig extra emacs packages from flake inputs
   extraPackages = lib.mapAttrs (inputName: input: let
