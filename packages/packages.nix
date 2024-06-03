@@ -6,6 +6,7 @@ pkgs: epkgs: let
     indent-bars = [elpaPackages.compat];
     copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s melpaPackages.f];
     notmuch-notify = [melpaPackages.alert melpaPackages.notmuch];
+    gptel = [pkgs.emacsPackages.transient elpaPackages.compat];
   };
 
   overrideAttrsPerPackage = { };
@@ -93,7 +94,7 @@ pkgs: epkgs: let
       poly-org
       casual 
       # org-re-reveal # FIXME very not nice hash mismatch when building
-      gptel
+      # gptel # TODO uncomment when there will be a new release including GPT-4o 
     ]) ++ (with elpaPackages; [
       delight
       kind-icon

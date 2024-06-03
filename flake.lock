@@ -68,6 +68,22 @@
         "type": "github"
       }
     },
+    "extra-package-gptel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1716768306,
+        "narHash": "sha256-7tgBSPZDxW0RDUqJpJn9849iS4yeQtchNPk7CSbblk0=",
+        "owner": "karthink",
+        "repo": "gptel",
+        "rev": "c0603cb973d160f3e450a0dec49dc5ae948f614c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "karthink",
+        "repo": "gptel",
+        "type": "github"
+      }
+    },
     "extra-package-indent-bars": {
       "flake": false,
       "locked": {
@@ -264,6 +280,7 @@
         "extra-package-agenix-el": "extra-package-agenix-el",
         "extra-package-combobulate": "extra-package-combobulate",
         "extra-package-copilot": "extra-package-copilot",
+        "extra-package-gptel": "extra-package-gptel",
         "extra-package-indent-bars": "extra-package-indent-bars",
         "extra-package-nix-ts-mode": "extra-package-nix-ts-mode",
         "extra-package-notmuch-notify": "extra-package-notmuch-notify",

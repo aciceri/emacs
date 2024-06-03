@@ -820,12 +820,12 @@ This is meant to be an helper to be called from the window manager."
 	    (insert response)))))))
   )
 
-(use-package copilot
-  :custom
-  (copilot-max-char -1)
-  (copilot-indent-offset-warning-disable 't)
-  :hook (prog-mode org-mode)
-  :bind (("C-<tab>" . copilot-accept-completion)))
+;; (use-package copilot
+;;  :custom
+;;  (copilot-max-char -1)
+;;  (copilot-indent-offset-warning-disable 't)
+;;  :hook (prog-mode org-mode)
+;;  :bind (("C-<tab>" . copilot-accept-completion)))
 
 (use-package pass
   :config
