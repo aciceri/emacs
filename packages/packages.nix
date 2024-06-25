@@ -100,7 +100,7 @@ pkgs: epkgs: let
       notmuch
       consult-notmuch
       poly-org
-      casual 
+      casual-calc
       # org-re-reveal # FIXME very not nice hash mismatch when building
       # gptel # TODO uncomment when there will be a new release including GPT-4o 
     ]) ++ (with elpaPackages; [
