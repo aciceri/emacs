@@ -436,21 +436,6 @@
        [("D" "Difftastic diff (dwim)" difftastic-magit-diff)
         ("S" "Difftastic show" difftastic-magit-show)])))
 
-(use-package sideline
-  :delight
-  :hook (flymake-mode . sideline-mode)
-  :custom
-  (sideline-flymake-display-mode 'line)
-  (sideline-backends-right '(sideline-flymake))
-  :config
-  ;; FIXME https://github.com/emacs-sideline/sideline/issues/13
-  (require 'sideline)
-  (defun ccr-sideline--align (&rest lengths)
-    "Align sideline string by LENGTHS from the right of the window."
-    (list (* (window-font-width)
-	    (+ (apply #'+ lengths) (if (display-graphic-p) 1 3)))))
-  (advice-add 'sideline--align :override #'ccr-sideline--align))
-
 ;; FIXME there is something deeply wrong about how nix is configured here
 ;; (use-package nix-mode
 ;;   :delight nix-prettify-mode
@@ -808,24 +793,24 @@ This is meant to be an helper to be called from the window manager."
 	    (end-pos (line-end-position)))
 	(gptel-request
 	    (buffer-substring-no-properties start-pos end-pos) ;the prompt
-	:system "You are proficient with emacs shell (eshell), translate the following to something I could directly prompt to the shell. Your responses should only be code, without explanation or formatting."
-	:buffer (current-buffer)
-	:context (cons (set-marker (make-marker) start-pos)
-                       (set-marker (make-marker) end-pos))
-	:callback
-	(lambda (response info)
-	  (if (not response)
-              (message "ChatGPT response failed with: %s" (plist-get info :status))
-	    (kill-region start-pos end-pos)
-	    (insert response)))))))
+	  :system "You are proficient with emacs shell (eshell), translate the following to something I could directly prompt to the shell. Your responses should only be code, without explanation or formatting."
+	  :buffer (current-buffer)
+	  :context (cons (set-marker (make-marker) start-pos)
+			 (set-marker (make-marker) end-pos))
+	  :callback
+	  (lambda (response info)
+	    (if (not response)
+		(message "ChatGPT response failed with: %s" (plist-get info :status))
+	      (kill-region start-pos end-pos)
+	      (insert response)))))))
   )
 
-;; (use-package copilot
-;;  :custom
-;;  (copilot-max-char -1)
-;;  (copilot-indent-offset-warning-disable 't)
-;;  :hook (prog-mode org-mode)
-;;  :bind (("C-<tab>" . copilot-accept-completion)))
+(use-package copilot
+ :custom
+ (copilot-max-char -1)
+ (copilot-indent-offset-warning-disable 't)
+ :hook (prog-mode org-mode)
+ :bind (("C-<tab>" . copilot-accept-completion)))
 
 (use-package pass
   :config
