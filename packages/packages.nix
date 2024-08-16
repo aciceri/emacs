@@ -117,8 +117,9 @@ mainPackages
   ++ (builtins.attrValues extraPackages)
   # Playing with EAF
   ++ [
-    (pkgs.callPackage ./eaf.nix {
-      inherit (epkgs) melpaBuild;
-      inherit (melpaPackages) ctable deferred epc s;
-    })
+    # Disabled because pymupdf was broken
+    # (pkgs.callPackage ./eaf.nix {
+    #   inherit (epkgs) melpaBuild;
+    #   inherit (melpaPackages) ctable deferred epc s;
+    # })
   ]
