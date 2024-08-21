@@ -10,33 +10,12 @@
       url = "github:jdtsmith/indent-bars";
       flake = false;
     };
-    extra-package-nix-ts-mode = {
-      url = "github:antifuchs/nix-ts-mode/improve-indented-string-indentation";
-      flake = false;
-    };
-    extra-package-combobulate = {
-      url = "github:mickeynp/combobulate";
-      flake = false;
-    };
-    extra-package-agenix-el = {
-      url = "github:t4ccer/agenix.el";
-      flake = false;
-    };
-    extra-package-copilot = {
-      url = "github:zerolfx/copilot.el";
-      flake = false;
-    };
     extra-package-notmuch-notify = {
       url = "github:firmart/notmuch-notify";
       flake = false;
     };
-    extra-package-meow-tree-sitter = {
-      url = "github:skissue/meow-tree-sitter";
-      flake = false;
-    };
-    # TODO remove when there will be a new release including GPT-4o 
-    extra-package-gptel = {
-      url = "github:karthink/gptel";
+    extra-package-copilot = {
+      url = "github:zerolfx/copilot.el";
       flake = false;
     };
   };

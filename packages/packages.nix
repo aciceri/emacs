@@ -4,10 +4,8 @@ pkgs: epkgs: let
 
   depsPerPackage = {
     indent-bars = [elpaPackages.compat];
-    copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s melpaPackages.f];
     notmuch-notify = [melpaPackages.alert melpaPackages.notmuch];
-    gptel = [pkgs.emacsPackages.transient elpaPackages.compat];
-    meow-tree-sitter = [melpaPackages.meow];
+    copilot = [melpaPackages.editorconfig melpaPackages.dash melpaPackages.s melpaPackages.f];
   };
 
   overrideAttrsPerPackage = {
@@ -40,6 +38,7 @@ pkgs: epkgs: let
     (package: ! builtins.elem package.pname (builtins.attrNames extraPackages))
     (with epkgs.melpaPackages; [
       meow
+      meow-tree-sitter
       dracula-theme
       nord-theme
       catppuccin-theme
@@ -75,6 +74,7 @@ pkgs: epkgs: let
       cape
       which-key
       nix-mode
+      nix-ts-mode
       agenix
       unisonlang-mode
       purescript-mode
@@ -101,6 +101,8 @@ pkgs: epkgs: let
       consult-notmuch
       poly-org
       casual-calc
+      gptel
+      agenix
       # org-re-reveal # FIXME very not nice hash mismatch when building
       # gptel # TODO uncomment when there will be a new release including GPT-4o 
     ]) ++ (with elpaPackages; [

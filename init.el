@@ -784,7 +784,13 @@ This is meant to be an helper to be called from the window manager."
 (use-package gptel
   :custom
   (gptel-api-key (getenv "OPENAI_API_KEY"))
+  (gptel-model "gpt-4o")
   :config
+  (require 'gptel-curl)
+
+  (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
+  (add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
+
   (defun ccr/suggest-eshell-command ()
     (interactive)
     (save-excursion
@@ -803,6 +809,18 @@ This is meant to be an helper to be called from the window manager."
 		(message "ChatGPT response failed with: %s" (plist-get info :status))
 	      (kill-region start-pos end-pos)
 	      (insert response)))))))
+
+  (add-to-list 'display-buffer-alist
+             '("^\\*ChatGPT\\*"
+               (display-buffer-full-frame)
+	       (name . "floating")))
+
+  (defun ccr/start-chatgpt () ;; Used from outside Emacs by emacsclient --eval
+    (display-buffer (gptel "*ChatGPT*"))
+    (set-frame-name "floating")
+    ;; (delete-other-windows)
+    ;; (add-hook 'kill-buffer-hook 'delete-frame nil 't)
+    ) ;; destroy frame on exit
   )
 
 (use-package copilot
