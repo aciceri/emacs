@@ -36,6 +36,22 @@
         "type": "github"
       }
     },
+    "extra-package-haskell-ts-mode": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1724558409,
+        "narHash": "sha256-dmY9tE5xKB+8od/EJkcUsAZGFBsRiGmz26StbWxfXxo=",
+        "ref": "refs/heads/main",
+        "rev": "5d3bd04e43066164feaa864953d30e53e0e137e3",
+        "revCount": 46,
+        "type": "git",
+        "url": "https://codeberg.org/pranshu/haskell-ts-mode.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://codeberg.org/pranshu/haskell-ts-mode.git"
+      }
+    },
     "extra-package-indent-bars": {
       "flake": false,
       "locked": {
@@ -207,6 +223,7 @@
       "inputs": {
         "emacs-overlay": "emacs-overlay",
         "extra-package-copilot": "extra-package-copilot",
+        "extra-package-haskell-ts-mode": "extra-package-haskell-ts-mode",
         "extra-package-indent-bars": "extra-package-indent-bars",
         "extra-package-notmuch-notify": "extra-package-notmuch-notify",
         "flake-parts": "flake-parts",

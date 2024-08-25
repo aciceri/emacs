@@ -18,6 +18,10 @@
       url = "github:zerolfx/copilot.el";
       flake = false;
     };
+    extra-package-haskell-ts-mode = {
+      url = "git+https://codeberg.org/pranshu/haskell-ts-mode.git";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:
