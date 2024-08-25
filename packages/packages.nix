@@ -53,10 +53,12 @@ pkgs: epkgs: let
       eshell-syntax-highlighting
       fish-completion # fish completion for eshell
       eshell-prompt-extras
-      esh-autosuggest
+      eshell-atuin
+      eshell-command-not-found
       clipetty
       sideline
-      sideline-flymake
+      consult-eglot
+      # sideline-flymake
       rainbow-delimiters
       vertico
       marginalia

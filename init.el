@@ -581,49 +581,9 @@
     (eshell 'N)
     (add-hook 'kill-buffer-hook 'delete-frame nil 't)) ;; destroy frame on exit
 
-  (defun ccr/eshell-history ()
-    "Interactive search eshell history."
-    (interactive)
-    (require 'em-hist)
-    (save-excursion
-      (eshell-bol)
-      (let* ((start-pos (point))
-    	     (end-pos (line-end-position))
-    	     (input (buffer-substring-no-properties start-pos end-pos)))
-	(message input)
-        (let* (
-	       (history-shell (split-string (shell-command-to-string "history") "\n"))
-	       (history-eshell (delete-dups (when (> (ring-size eshell-history-ring) 0)
-    					      (ring-elements eshell-history-ring))))
-	       (history (append history-shell history-eshell))
-	       ;; (history-highlighted (mapcar #'(lambda (cmd)
-	       ;; 					(with-temp-buffer
-	       ;; 					  (text-mode)
-	       ;; 					  (insert cmd)
-	       ;; 					  (forward-line 0)
-	       ;; 					  ;; FIXME it breaks trying to highlight commands like `cd /ssh:host:~'
-	       ;; 					  ;; (eshell-syntax-highlighting--parse-and-highlight 'command (point-max))
-	       ;; 					  (add-face-text-property (point-min) (point-max) '(:background nil))
-	       ;; 					  (buffer-string)))
-	       ;; 				    history))
-	       (command (completing-read
-			 "Command: "
-			 history
-			 nil
-			 nil
-			 input
-			 )))
-    	  (kill-region start-pos end-pos)
-	  (insert command)
-    	  )))
-    (end-of-line))
-
-  (defun ccr/wrap-eshell-write-history (orig-fun &optional filename &rest _)
-    (apply orig-fun `(,filename 't)))
-
   ;; Wrapping this in order to merge histories from different shells
-  (advice-add 'eshell-write-history
-	      :around #'ccr/wrap-eshell-write-history)
+  ;; (advice-add 'eshell-write-history
+  ;; 	      :around #'ccr/wrap-eshell-write-history)
 
   (add-to-list 'eshell-modules-list 'eshell-tramp) ;; to use sudo in eshell
   ;; (add-to-list 'eshell-modules-list 'eshell-smart) ;; plan 9 style
@@ -644,11 +604,14 @@
   :hook (eshell-mode . (lambda () (setq-local scroll-margin 0)))
   :bind (("C-c o e" . project-eshell)
 	 :map eshell-mode-map
-	 ("C-r" . ccr/eshell-history))) ;; i.e. just C-r in semi-char-mode
+	 ("C-r" . eshell-atuin-history))) ;; i.e. just C-r in semi-char-mode
 
-(use-package esh-autosuggest
-  ;; :hook (eshell-mode . esh-autosuggest-mode) # FIXME otherwise emacs stucks
-  )
+(use-package eshell-command-not-found
+  :custom ((eshell-command-not-found-command "command-not-found"))
+  :hook ((eshell-mode . eshell-command-not-found-mode)))
+
+(use-package eshell-atuin
+  :hook ((eshell-mode . eshell-atuin-mode)))
 
 (use-package fish-completion-mode
   :hook ((eshell-mode . fish-completion-mode)))
