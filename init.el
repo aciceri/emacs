@@ -31,6 +31,13 @@
   (eglot-connect-timeout nil) ; never timeout
   )
 
+(use-package consult-eglot
+  :after (consult eglot embark)
+  :config
+    (require 'consult-eglot-embark)
+    (consult-eglot-embark-mode)
+  )
+
 (use-package emacs
   :bind (("<mouse-4>" . scroll-down-line)
 	 ("<mouse-5>" . scroll-up-line)
@@ -420,10 +427,11 @@
 (use-package magit-delta
   :hook (magit-mode . magit-delta-mode))
 
-(use-package magit-todos
-  :after magit
-  :custom (magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?")
-  :config (magit-todos-mode 1))
+;; FIXME
+;; (use-package magit-todos
+;;   :after magit
+;;   :custom (magit-todos-keyword-suffix "\\(?:([^)]+)\\)?:?")
+;;   :config (magit-todos-mode 1))
 
 (use-package difftastic
   :demand t
@@ -453,10 +461,6 @@
 			  (require 'eglot)
 			  (add-to-list 'eglot-server-programs
 				       '(nix-ts-mode . ("nixd")))
-			  ;; FIXME `nixd' completion not working, will give it a second try in the future
-			  ;; '(nix-ts-mode . ("nixd" :initializationOptions (:eval (:depth 10 :workers 4)
-			  ;; 						      :formatting (:command "alejandra")
-			  ;; 						      :options (:enable t :target (:installable "" :args ["--epxr" "(import \"${(builtins.getFlake \"n\")}/nixos\" {}).options" "--json"]))))))
 			  (eglot-ensure)))
 	 (nix-ts-mode . electric-pair-mode)
 	 (nix-ts-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode)))
@@ -481,9 +485,13 @@
 			  (eglot-ensure))))
   :mode "\\.ts\\'")
 
-(use-package haskell-mode
-  :hook ((haskell-mode . eglot-ensure))
+(use-package haskell-ts-mode
+  :hook ((haskell--ts-mode . eglot-ensure)
   :mode "\\.hs\\'")
+
+(use-package typst-ts-mode
+  :hook ((typst--ts-mode . eglot-ensure)
+  :mode "\\.typ\\'")
 
 (use-package purescript-mode
   :custom ((project-vc-extra-root-markers '("spago.dhall")))

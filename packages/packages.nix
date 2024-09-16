@@ -78,6 +78,7 @@ pkgs: epkgs: let
       nix-mode
       nix-ts-mode
       agenix
+      zig-mode
       unisonlang-mode
       purescript-mode
       dhall-mode

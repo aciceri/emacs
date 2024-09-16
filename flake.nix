@@ -22,6 +22,10 @@
       url = "git+https://codeberg.org/pranshu/haskell-ts-mode.git";
       flake = false;
     };
+    extra-package-typst-ts-mode = {
+      url = "git+https://codeberg.org/meow_king/typst-ts-mode.git";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:
