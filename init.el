@@ -57,6 +57,7 @@
   (backup-by-copying t)
   (focus-follows-mouse t)
   (mouse-autoselect-window t)
+  (treesit-font-lock-level 4)
   :config
   (set-face-background 'vertical-border (face-background 'default))
   (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?┃))
@@ -80,7 +81,7 @@
     (interactive)
     (let* ((operation (completing-read "nixos-rebuild " '("switch" "boot" "test" "dry-activate")))
 	   (buffer-name (format "nixos-rebuild-%s" operation)))
-      (async-shell-command (format "sudo nixos-rebuild --flake fleet %s --override-input ccrEmacs /home/ccr/.config/emacs -L" operation) buffer-name)))
+      (async-shell-command (format "sudo nixos-rebuild --flake fleet %s -L" operation) buffer-name)))
   )
 
 (use-package doc-view
@@ -226,8 +227,8 @@
    '("." . meow-bounds-of-thing)
    '("[" . meow-beginning-of-thing)
    '("]" . meow-end-of-thing)
-   '(">" . meow-indent)
-   '("<" . meow-back-to-indentation)
+   '(">" . indent-rigidly-right)
+   '("<" . indent-rigidly-left)
    '("a" . meow-append)
    '("A" . meow-open-below)
    '("b" . meow-back-word)
@@ -343,20 +344,20 @@
     (("DEL" . vertico-directory-delete-char)
      ("C-DEL" . vertico-directory-delete-word))))
 
-(use-package vertico-posframe
-  :after vertico
-  :config
-  (vertico-posframe-mode +1)
-  :custom
-  (vertico-multiform-commands
-   '((t
-      posframe
-      (vertico-posframe-poshandler . posframe-poshandler-frame-center)
-      (vertico-posframe-fallback-mode . vertico-buffer-mode))))
-  (vertico-posframe-min-height 1)
-  ;; (vertico-posframe-min-width 80)
-  (vertico-posframe-parameters '((alpha-background . 80)))
-)
+;; (use-package vertico-posframe
+;;   :after vertico
+;;   :config
+;;   (vertico-posframe-mode +1)
+;;   :custom
+;;   (vertico-multiform-commands
+;;    '((t
+;;       posframe
+;;       (vertico-posframe-poshandler . posframe-poshandler-frame-center)
+;;       (vertico-posframe-fallback-mode . vertico-buffer-mode))))
+;;   (vertico-posframe-min-height 1)
+;;   ;; (vertico-posframe-min-width 80)
+;;   (vertico-posframe-parameters '((alpha-background . 80)))
+;; )
 
 (use-package marginalia
   :init
@@ -455,7 +456,6 @@
   :hook (agenix-pre-mode . envrc-mode))
 
 (use-package nix-ts-mode
-  :custom ((nix-ts-mode--embed-bash nil))
   :hook (
 	 (nix-ts-mode . (lambda ()
 			  (require 'eglot)
@@ -463,7 +463,21 @@
 				       '(nix-ts-mode . ("nixd")))
 			  (eglot-ensure)))
 	 (nix-ts-mode . electric-pair-mode)
-	 (nix-ts-mode . (lambda () (setq indent-bars-spacing-override 2) (indent-bars-mode)))
+	 (nix-ts-mode . (lambda () (setq-local indent-bars-spacing-override 2) (indent-bars-mode)))
+	 (nix-ts-mode . (lambda ()
+			  (setq-local
+			   treesit-font-lock-settings
+			   (append treesit-font-lock-settings
+				   (treesit-font-lock-rules
+				    :language 'nix
+				    :feature 'function
+				    :override t
+				    `((formal) @font-lock-type-face)
+										   
+				    :language 'nix
+				    :feature 'function
+				    `((attrpath) @font-lock-function-name-face)
+				    )))))
 	 )
   :mode "\\.nix\\'"
   )
@@ -486,12 +500,11 @@
   :mode "\\.ts\\'")
 
 (use-package haskell-ts-mode
-  :hook ((haskell--ts-mode . eglot-ensure)
-  :mode "\\.hs\\'")
-
-(use-package typst-ts-mode
-  :hook ((typst--ts-mode . eglot-ensure)
-  :mode "\\.typ\\'")
+  :hook ((haskell--ts-mode . eglot-ensure))
+  :mode "\\.hs\\'"
+  :config
+  (add-to-list 'eglot-server-programs
+	       '(haskell-ts-mode . ("haskell-language-server-wrapper" "--lsp"))))
 
 (use-package purescript-mode
   :custom ((project-vc-extra-root-markers '("spago.dhall")))
@@ -684,7 +697,8 @@
 	   (org-special-ctrl-a/e t)
 	   (org-insert-heading-respect-content t)
 	   (org-pretty-entities t)
-	   (org-ellipsis "…"))
+	   (org-ellipsis "…")
+	   )
   :bind (("C-c o l" . org-store-link)
 	 ("C-c o a" . org-agenda)
 	 ("C-c o c" . org-capture)
@@ -697,17 +711,13 @@ This is meant to be an helper to be called from the window manager."
     (org-capture nil key)
     (add-hook 'kill-buffer-hook 'delete-frame nil 't) ;; destroy frame on exit
     (delete-other-windows))
-  ;; FIXME the following doesn't work when using the daemon, it should be executed only
-  ;; one time after the first frame is created 
-  (set-face-font 'variable-pitch "Dejavu Serif-14")
-  (set-face-font 'fixed-pitch "Iosevka Comfy-14")
 
   (dolist (face '(org-block-begin-line 
-                org-block-end-line 
-                org-verbatim
-		org-code
-                ))
-  (set-face-attribute face nil :inherit 'fixed-pitch))
+                  org-block-end-line 
+                  org-verbatim
+		  org-code
+                  ))
+    (set-face-attribute face nil :inherit 'fixed-pitch))
   
   (org-babel-do-load-languages
    'org-babel-load-languages '((haskell . t))))
@@ -727,10 +737,57 @@ This is meant to be an helper to be called from the window manager."
 
 (use-package org-modern
   :after org
-  :init (global-org-modern-mode))
+  :init
+  (global-org-modern-mode)
+  ;; FIXME the following doesn't work when using the daemon, it should be executed only
+  ;; one time after the first frame is created
+  :hook (server-after-make-frame . (lambda ()
+  (set-face-font 'variable-pitch "Dejavu Serif-14")
+  (set-face-font 'fixed-pitch "Iosevka Comfy-14")
+  (set-face-font 'org-table "Iosevka Comfy-14")
+  (set-face-font 'org-meta-line "Iosevka Comfy-14")
+  (set-face-font 'org-drawer "Iosevka Comfy-14")
+  (set-face-font 'org-special-keyword "Iosevka Comfy-14")
+  (set-face-font 'org-property-value "Iosevka Comfy-14")
+  (set-face-font 'org-block "Iosevka Comfy-14")
+  (set-face-font 'org-modern-tag "Iosevka Comfy-14")
+  (set-face-font 'org-modern-date-active "Iosevka Comfy-14")
+  (set-face-font 'org-modern-date-inactive "Iosevka Comfy-14")))
+)
 
-(use-package org-roam)
- 
+(use-package org-roam
+  :custom
+  (org-roam-v2-ack t)
+  (org-roam-directory (file-truename "~/org"))
+  (org-roam-complete-everywhere 't)
+  (org-roam-dailies-capture-templates
+   '(("d" "default" entry "* TODO %?"
+      :target
+      (file+head "%<%Y-%m-%d>.org" "#+TITLE: %<%Y-%m-%d %A>\n"))))
+  :config
+  (require 'org-roam-dailies)
+  (org-roam-db-autosync-mode)
+
+  ;; The following functions name are relevant because org-roam-ql columns in queries use their suffix
+  (defun org-roam-node-spent (node)
+    "Return the hours spent as number"
+    (string-to-number (cdr (assoc "SPENT" (org-roam-node-properties node)))))
+  (defun org-roam-node-date (node)
+    "Return the org datestring when a node was created (obtained from the filename)"
+      (format "<%s>" (file-name-sans-extension (file-name-nondirectory (org-roam-node-file node)))))
+  
+  (defun ccr/org-roam-spent-hours (client)
+    "Return the total spent hours on something (usually a client)"
+    (apply #'+(mapcar #'org-roam-node-spent (org-roam-ql-nodes `(tags ,client "billable")))))
+  )
+
+(use-package org-roam-ql
+  :after org-roam
+  :bind ((:map org-roam-mode-map
+               ("v" . org-roam-ql-buffer-dispatch)
+               :map minibuffer-mode-map
+               ("C-c n i" . org-roam-ql-insert-node-title))))
+
 (use-package consult-org-roam
   :delight
   :after org-roam
@@ -739,9 +796,10 @@ This is meant to be an helper to be called from the window manager."
   ;; Activate the minor mode
   (consult-org-roam-mode 1)
   :custom
-  (consult-org-roam-grep-func #'consult-ripgrep)
+  (consutl-org-roam-grep-func #'consult-ripgrep)
   (consult-org-roam-buffer-narrow-key ?r)
   (consult-org-roam-buffer-after-buffers t)
+  (setq org-roam-database-connector 'sqlite-builtin)
   :config
   (consult-customize
    consult-org-roam-forward-links
@@ -750,7 +808,7 @@ This is meant to be an helper to be called from the window manager."
   ("C-c n f" . consult-org-roam-file-find)
   ("C-c n b" . consult-org-roam-backlinks)
   ("C-c n l" . consult-org-roam-forward-links)
-  ("C-c n r" . consult-org-roam-search))
+  ("C-c n s" . consult-org-roam-search))
 
 (use-package gptel
   :custom
@@ -794,12 +852,12 @@ This is meant to be an helper to be called from the window manager."
     ) ;; destroy frame on exit
   )
 
-(use-package copilot
- :custom
- (copilot-max-char -1)
- (copilot-indent-offset-warning-disable 't)
- :hook (prog-mode org-mode)
- :bind (("C-<tab>" . copilot-accept-completion)))
+; (use-package copilot
+;  :custom
+;  (copilot-max-char -1)
+;  (copilot-indent-offset-warning-disable 't)
+;  :hook (prog-mode org-mode)
+;  :bind (("C-<tab>" . copilot-accept-completion)))
 
 (use-package pass
   :config
@@ -831,8 +889,8 @@ This is meant to be an helper to be called from the window manager."
   (send-mail-function 'smtpmail-send-it)
   (user-mail-address "andrea.ciceri@autistici.org")
   (smtpmail-smtp-server "mail.autistici.org")
-  (smtpmail-stream-type 'starttls)
-  (smtpmail-smtp-service 587)
+  (smtpmail-stream-type 'ssl)
+  (smtpmail-smtp-service 465)
   ;; also the following line is needeed in ~/.authinfo.gpg
   ;; machine mail.autistici.org login andrea.ciceri@autistici.org password <password>
   )
@@ -840,18 +898,14 @@ This is meant to be an helper to be called from the window manager."
 (use-package notmuch
   :custom
   (notmuch-show-logo nil)
-  (send-mail-function 'sendmail-send-it))
-
-(use-package alert
-  :config
-  (alert "Emacs started")
-  :custom
-  (alert-default-style 'notifications))
-
-(use-package notmuch-notify
-  :hook (notmuch-hello-refresh . notmuch-notify-hello-refresh-status-message)
-  :config
-  (notmuch-notify-set-refresh-timer))
+  (send-mail-function 'sendmail-send-it)
+  (notmuch-archive-tags '("-new"))
+  (notmuch-saved-searches
+   '((:name "Inbox" :query "tag:new" :key "i")
+     (:name "Sent" :query "tag:sent" :key "s")
+     (:name "Draft" :query "tag:draft" :key "s")
+     (:name "GitHub" :query "tag:github" :key "g")
+     (:name "Trash" :query "tag:trash" :key "t"))))
 
 (provide 'init)
 ;;; init.el ends here
