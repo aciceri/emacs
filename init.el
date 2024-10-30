@@ -761,13 +761,25 @@ This is meant to be an helper to be called from the window manager."
   (org-roam-directory (file-truename "~/org"))
   (org-roam-complete-everywhere 't)
   (org-roam-dailies-capture-templates
-   '(("d" "default" entry "* TODO %?"
-      :target
-      (file+head "%<%Y-%m-%d>.org" "#+TITLE: %<%Y-%m-%d %A>\n"))))
+   '(
+     ("d" "Generic entry" entry
+      "* %?"
+      :target (file+head "%<%Y-%m-%d>.org" "#+title %<%Y-%m-%d>"))
+     ("b" "Billable entry" entry
+      "* TODO ${Entry} :billable:${Client}:\n:PROPERTIES:\n:SPENT: ${Spent}\n:END:\n%?"
+      :target (file+head "%<%Y-%m-%d>.org" "#+title %<%Y-%m-%d>")
+      :create-id t))
+   )
   :config
   (require 'org-roam-dailies)
   (org-roam-db-autosync-mode)
 
+  ;; In order to automatically add an org id for some capture templates (using the :create-id keyword)
+  (defun ccr/org-capture-maybe-create-id ()
+    (when (org-capture-get :create-id)
+      (org-id-get-create)))
+  (add-hook 'org-capture-mode-hook #'ccr/org-capture-maybe-create-id)
+  
   ;; The following functions name are relevant because org-roam-ql columns in queries use their suffix
   (defun org-roam-node-spent (node)
     "Return the hours spent as number"
@@ -812,7 +824,7 @@ This is meant to be an helper to be called from the window manager."
 
 (use-package gptel
   :custom
-  (gptel-api-key (getenv "OPENAI_API_KEY"))
+  (gptel-api-key (lambda () (require 'f) (f-read-text (getenv "OPENAI_API_KEY_PATH"))))
   (gptel-model "gpt-4o")
   :config
   (require 'gptel-curl)
@@ -840,9 +852,9 @@ This is meant to be an helper to be called from the window manager."
 	      (insert response)))))))
 
   (add-to-list 'display-buffer-alist
-             '("^\\*ChatGPT\\*"
-               (display-buffer-full-frame)
-	       (name . "floating")))
+               '("^\\*ChatGPT\\*"
+		 (display-buffer-full-frame)
+		 (name . "floating")))
 
   (defun ccr/start-chatgpt () ;; Used from outside Emacs by emacsclient --eval
     (display-buffer (gptel "*ChatGPT*"))
@@ -851,13 +863,6 @@ This is meant to be an helper to be called from the window manager."
     ;; (add-hook 'kill-buffer-hook 'delete-frame nil 't)
     ) ;; destroy frame on exit
   )
-
-; (use-package copilot
-;  :custom
-;  (copilot-max-char -1)
-;  (copilot-indent-offset-warning-disable 't)
-;  :hook (prog-mode org-mode)
-;  :bind (("C-<tab>" . copilot-accept-completion)))
 
 (use-package pass
   :config
