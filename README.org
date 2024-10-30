@@ -1,3 +1,10 @@
+**IMPORTANT:** This repo has to be considered archived. Everything that was here has now been merged into https://github.com/aciceri/nixfleet
+
+Conceptually having my Emacs managed as a separated flake had advantages but I never fully exploited them since I've always used it as input
+from the ~nixfleet~ repository, it became just a burden having to maintain two repos.
+
+I'm leaving the repository here for historical purposes.
+
 * My opinionated Emacs
 
 This is a Nix flake to build my Emacs.
